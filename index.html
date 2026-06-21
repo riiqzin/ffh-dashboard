@@ -6,130 +6,108 @@
 <title>Dashboard — Fandom Fashion House</title>
 <style>
 :root {
-  --bg: #0d0d0d; --bg2: #141414; --bg3: #1a1a1a; --bg4: #222222;
-  --border: #2a2a2a; --border2: #333333;
-  --gold: #c9a84c; --gold2: #e8c97a; --gold3: #8a6a1f;
-  --text: #f0f0f0; --text2: #a0a0a0; --text3: #555555;
-  --green: #22c55e; --green-bg: #0a1f10;
-  --red: #ef4444; --red-bg: #1f0a0a;
-  --yellow: #f59e0b; --yellow-bg: #1f1505;
-  --blue: #60a5fa; --blue-bg: #0a1220;
+  --bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--bg4:#222222;
+  --border:#2a2a2a;--border2:#333333;
+  --gold:#c9a84c;--gold3:#8a6a1f;
+  --text:#f0f0f0;--text2:#a0a0a0;--text3:#555555;
+  --green:#22c55e;--green-bg:#0a1f10;
+  --red:#ef4444;--red-bg:#1f0a0a;
+  --yellow:#f59e0b;--yellow-bg:#1f1505;
+  --blue:#60a5fa;--blue-bg:#0a1220;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; }
-
-.sidebar { position: fixed; left: 0; top: 0; bottom: 0; width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 100; }
-.sidebar-logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
-.sidebar-logo img { width: 34px; height: 34px; object-fit: contain; }
-.sidebar-logo-text { font-size: 10px; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.4; }
-.sidebar-nav { flex: 1; padding: 14px 0; }
-.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 10px 20px 5px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--text2); font-size: 13px; cursor: pointer; border-left: 2px solid transparent; transition: all 0.15s; user-select: none; }
-.nav-item:hover { color: var(--text); background: var(--bg3); }
-.nav-item.active { color: var(--gold); background: rgba(201,168,76,0.07); border-left-color: var(--gold); }
-.nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
-.sidebar-footer { padding: 14px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); }
-
-.main { margin-left: 220px; min-height: 100vh; }
-.topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 28px; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 90; }
-.topbar-title { font-size: 14px; font-weight: 600; }
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-.sync-status { font-size: 11px; color: var(--text3); }
-.btn-sync { display: flex; align-items: center; gap: 6px; padding: 6px 13px; background: rgba(201,168,76,0.08); border: 1px solid var(--gold3); border-radius: 6px; color: var(--gold); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-.btn-sync:hover { background: rgba(201,168,76,0.18); }
-.btn-sync svg { width: 13px; height: 13px; }
-.btn-sync.spinning svg { animation: spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.content { padding: 24px 28px; }
-.section-title { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
-
-.metrics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
-.metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-.metric-label { font-size: 10px; color: var(--text3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
-.metric-value { font-size: 20px; font-weight: 600; line-height: 1; }
-.metric-value.gold { color: var(--gold); }
-.metric-value.green { color: var(--green); }
-.metric-value.orange { color: var(--yellow); }
-.metric-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
-
-.collections-row { display: flex; gap: 7px; margin-bottom: 24px; flex-wrap: wrap; }
-.coll-chip { padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid var(--border2); color: var(--text2); background: var(--bg3); }
-.coll-chip b { color: var(--gold); margin-left: 3px; }
-
-.orders-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.filters { display: flex; gap: 6px; }
-.filter-btn { padding: 5px 11px; border-radius: 6px; font-size: 11px; border: 1px solid var(--border); color: var(--text2); background: transparent; cursor: pointer; transition: all 0.15s; }
-.filter-btn:hover { border-color: var(--gold3); color: var(--gold); }
-.filter-btn.active { border-color: var(--gold3); color: var(--gold); background: rgba(201,168,76,0.08); }
-
-.order-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: border-color 0.15s; }
-.order-card:hover { border-color: var(--border2); }
-.order-header { padding: 14px 18px; display: grid; grid-template-columns: 150px 1fr 150px 110px 120px 110px 36px; align-items: center; gap: 10px; cursor: pointer; }
-.o-num { font-size: 13px; font-weight: 600; color: var(--gold); }
-.o-num-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.o-name { font-size: 13px; font-weight: 500; }
-.o-name-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.o-product { font-size: 12px; color: var(--text2); }
-.o-product small { color: var(--text3); display: block; }
-.o-price { font-size: 14px; font-weight: 600; text-align: right; }
-.o-profit { font-size: 11px; color: var(--green); text-align: right; margin-top: 2px; }
-
-.badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.bg-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
-.bg-yellow { background: var(--yellow-bg); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
-.bg-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
-.bg-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(96,165,250,0.2); }
-.bg-gold { background: rgba(201,168,76,0.08); color: var(--gold); border: 1px solid rgba(201,168,76,0.2); }
-
-.expand-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.expand-btn:hover { border-color: var(--gold3); color: var(--gold); }
-
-.order-detail { border-top: 1px solid var(--border); padding: 18px; display: none; background: var(--bg3); }
-.order-detail.open { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-
-.dt-title { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
-.dt-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
-.dt-row:last-child { border-bottom: none; }
-.dt-k { font-size: 12px; color: var(--text3); }
-.dt-v { font-size: 12px; color: var(--text); text-align: right; max-width: 55%; word-break: break-word; }
-.dt-v.green { color: var(--green); }
-.dt-v.red { color: var(--red); }
-.dt-v.gold { color: var(--gold); }
-
-.steps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.step { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--text3); }
-.step.done { color: var(--text2); }
-.step-circle { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.step-circle.done { background: var(--green); border-color: var(--green); }
-
-.form-input { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 12px; outline: none; transition: border-color 0.15s; }
-.form-input:focus { border-color: var(--gold3); }
-.form-input::placeholder { color: var(--text3); }
-.form-row { display: flex; gap: 7px; align-items: center; margin-top: 5px; }
-.form-row .form-input { margin-top: 0; }
-.btn-save { padding: 7px 12px; background: rgba(201,168,76,0.12); border: 1px solid var(--gold3); border-radius: 6px; color: var(--gold); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.btn-save:hover { background: rgba(201,168,76,0.22); }
-
-.prazo-wrap { margin-top: 6px; }
-.prazo-bg { background: var(--bg4); border-radius: 4px; height: 5px; overflow: hidden; }
-.prazo-fill { height: 100%; border-radius: 4px; transition: width 0.5s, background 0.3s; }
-.prazo-info { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-top: 3px; }
-
-.tracking-link { color: var(--blue); text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; }
-.tracking-link:hover { text-decoration: underline; }
-
-.obs-area { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 12px; outline: none; resize: vertical; min-height: 56px; font-family: inherit; margin-top: 5px; }
-.obs-area::placeholder { color: var(--text3); }
-
-.alert-box { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.2); border-radius: 7px; padding: 9px 13px; font-size: 12px; color: var(--red); display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
-
-.empty { text-align: center; padding: 50px 20px; color: var(--text3); font-size: 13px; }
-.loading { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
-
-.config-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; max-width: 480px; margin-bottom: 20px; }
-
-.field-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; display: block; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+.sidebar-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.sidebar-logo img{width:34px;height:34px;object-fit:contain;}
+.sidebar-logo-text{font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;line-height:1.4;}
+.sidebar-nav{flex:1;padding:14px 0;}
+.nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:10px 20px 5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--text2);font-size:13px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;user-select:none;}
+.nav-item:hover{color:var(--text);background:var(--bg3);}
+.nav-item.active{color:var(--gold);background:rgba(201,168,76,.07);border-left-color:var(--gold);}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);}
+.main{margin-left:220px;min-height:100vh;}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;}
+.topbar-title{font-size:14px;font-weight:600;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.sync-status{font-size:11px;color:var(--text3);}
+.btn-sync{display:flex;align-items:center;gap:6px;padding:6px 13px;background:rgba(201,168,76,.08);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-sync:hover{background:rgba(201,168,76,.18);}
+.btn-sync svg{width:13px;height:13px;}
+.btn-sync.spinning svg{animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.content{padding:24px 28px;}
+.section-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px;}
+.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.metric-label{font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+.metric-value{font-size:20px;font-weight:600;line-height:1;}
+.metric-value.gold{color:var(--gold);}
+.metric-value.green{color:var(--green);}
+.metric-value.orange{color:var(--yellow);}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:3px;}
+.collections-row{display:flex;gap:7px;margin-bottom:24px;flex-wrap:wrap;}
+.coll-chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);}
+.coll-chip b{color:var(--gold);margin-left:3px;}
+.orders-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.filters{display:flex;gap:6px;}
+.filter-btn{padding:5px 11px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
+.order-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
+.order-card:hover{border-color:var(--border2);}
+.order-header{padding:14px 18px;display:grid;grid-template-columns:150px 1fr 160px 110px 120px 110px 36px;align-items:center;gap:10px;cursor:pointer;}
+.o-num{font-size:13px;font-weight:600;color:var(--gold);}
+.o-num-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.o-name{font-size:13px;font-weight:500;}
+.o-name-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.o-price{font-size:14px;font-weight:600;text-align:right;}
+.o-profit{font-size:11px;color:var(--green);text-align:right;margin-top:2px;}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;}
+.bg-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.bg-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.bg-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.bg-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
+.bg-gold{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2);}
+.expand-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.expand-btn:hover{border-color:var(--gold3);color:var(--gold);}
+.order-detail{border-top:1px solid var(--border);padding:18px;display:none;background:var(--bg3);}
+.order-detail.open{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+.dt-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.dt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+.dt-row:last-child{border-bottom:none;}
+.dt-k{font-size:12px;color:var(--text3);}
+.dt-v{font-size:12px;color:var(--text);text-align:right;max-width:55%;word-break:break-word;}
+.dt-v.green{color:var(--green);}
+.dt-v.red{color:var(--red);}
+.dt-v.gold{color:var(--gold);}
+.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.step{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--text3);}
+.step.done{color:var(--text2);}
+.step-circle{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-circle.done{background:var(--green);border-color:var(--green);}
+.form-input{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;transition:border-color .15s;}
+.form-input:focus{border-color:var(--gold3);}
+.form-input::placeholder{color:var(--text3);}
+.form-row{display:flex;gap:7px;align-items:center;margin-top:5px;}
+.form-row .form-input{margin-top:0;}
+.btn-save{padding:7px 12px;background:rgba(201,168,76,.12);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-save:hover{background:rgba(201,168,76,.22);}
+.prazo-wrap{margin-top:6px;}
+.prazo-bg{background:var(--bg4);border-radius:4px;height:5px;overflow:hidden;}
+.prazo-fill{height:100%;border-radius:4px;transition:width .5s,background .3s;}
+.prazo-info{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px;}
+.tracking-link{color:var(--blue);text-decoration:none;font-size:12px;display:inline-flex;align-items:center;gap:4px;}
+.tracking-link:hover{text-decoration:underline;}
+.obs-area{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;resize:vertical;min-height:56px;font-family:inherit;margin-top:5px;}
+.obs-area::placeholder{color:var(--text3);}
+.alert-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--red);display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;}
+.config-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;max-width:480px;margin-bottom:20px;}
+.hot-box{background:rgba(201,168,76,.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px;}
+.hot-box-label{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.product-box{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:14px;}
 </style>
 </head>
 <body>
@@ -172,39 +150,18 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 
   <div class="content">
 
-    <!-- MONITORAMENTO -->
     <div id="tab-monitor">
       <div class="section-title">Resumo geral</div>
       <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-label">Pedidos hoje</div>
-          <div class="metric-value" id="m-hoje">—</div>
-          <div class="metric-sub">desde meia-noite</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Faturamento mês</div>
-          <div class="metric-value gold" id="m-fat">—</div>
-          <div class="metric-sub" id="m-fat-sub">carregando</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Lucro líquido</div>
-          <div class="metric-value green" id="m-lucro">—</div>
-          <div class="metric-sub" id="m-lucro-sub">margem</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Pendentes ação</div>
-          <div class="metric-value orange" id="m-pendentes">—</div>
-          <div class="metric-sub">sem código Hotprinti</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Ticket médio</div>
-          <div class="metric-value" id="m-ticket">—</div>
-          <div class="metric-sub">baseado no mês</div>
-        </div>
+        <div class="metric-card"><div class="metric-label">Pedidos hoje</div><div class="metric-value" id="m-hoje">—</div><div class="metric-sub">desde meia-noite</div></div>
+        <div class="metric-card"><div class="metric-label">Faturamento mês</div><div class="metric-value gold" id="m-fat">—</div><div class="metric-sub" id="m-fat-sub">carregando</div></div>
+        <div class="metric-card"><div class="metric-label">Lucro líquido</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-sub">margem</div></div>
+        <div class="metric-card"><div class="metric-label">Pendentes ação</div><div class="metric-value orange" id="m-pendentes">—</div><div class="metric-sub">sem código Hotprinti</div></div>
+        <div class="metric-card"><div class="metric-label">Ticket médio</div><div class="metric-value" id="m-ticket">—</div><div class="metric-sub">baseado no mês</div></div>
       </div>
 
       <div class="section-title">Coleções — vendas do mês</div>
-      <div class="collections-row" id="collections-row">
+      <div class="collections-row">
         <div class="coll-chip">The Walking Dead <b id="c-twd">0</b></div>
         <div class="coll-chip">Supernatural <b id="c-spn">0</b></div>
         <div class="coll-chip">The Boys <b id="c-boys">0</b></div>
@@ -223,21 +180,13 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
           <button class="filter-btn" onclick="filterOrders('entregue',this)">Entregues</button>
         </div>
       </div>
-
-      <div id="orders-list">
-        <div class="loading">Carregando pedidos...</div>
-      </div>
+      <div id="orders-list"><div class="empty">Carregando pedidos...</div></div>
     </div>
 
-    <!-- ESTATÍSTICAS -->
     <div id="tab-stats" style="display:none">
-      <div class="empty">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36" style="margin-bottom:10px;display:block;margin-inline:auto"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Estatísticas disponíveis quando houver mais pedidos
-      </div>
+      <div class="empty">Estatísticas disponíveis quando houver mais pedidos</div>
     </div>
 
-    <!-- CONFIG -->
     <div id="tab-config" style="display:none">
       <div class="section-title">Custos de produção — Hotprinti</div>
       <div class="config-card">
@@ -261,7 +210,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
       <div class="config-card">
         <div class="dt-row"><span class="dt-k">Store ID</span><span class="dt-v gold">5191961</span></div>
         <div class="dt-row"><span class="dt-k">App ID</span><span class="dt-v">16103</span></div>
-        <div class="dt-row"><span class="dt-k">Status</span><span class="badge bg-green" id="api-status">● Verificando</span></div>
+        <div class="dt-row"><span class="dt-k">Status</span><span class="badge bg-green" id="api-status">● Conectado</span></div>
       </div>
     </div>
 
@@ -269,62 +218,43 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 </main>
 
 <script>
-const COSTS = {
-  'tradicional-frente': 46.70,
-  'tradicional-costas': 48.20,
-  'boxy-frente': 86.70,
-  'boxy-costas': 88.20
-};
-const PRICE_TRAD = 99.90;
-const PRICE_BOXY = 165.00;
-
+const COSTS = {'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
 const orderMeta = JSON.parse(localStorage.getItem('ffh-order-meta') || '{}');
 
-function saveMeta() {
-  localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta));
-}
+function saveMeta() { localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta)); }
 
 function calcProfit(order) {
   const total = parseFloat(order.total);
-  const method = order.payment_details?.method || '';
-  const isPix = method.toLowerCase().includes('pix');
-
-  let value = isPix ? total * 0.95 : total;
-  let taxa = isPix ? value * 0.0099 : (value * 0.0369 + 0.35);
-  let valorLiq = value - taxa;
-
+  const method = (order.payment_details?.method || '').toLowerCase();
+  const isPix = method.includes('pix');
+  const value = isPix ? total * 0.95 : total;
+  const taxa = isPix ? value * 0.0099 : (value * 0.0369 + 0.35);
+  const valorLiq = value - taxa;
   const product = order.products?.[0];
   const name = (product?.name?.pt || product?.name?.['pt-BR'] || '').toLowerCase();
   const variant = (product?.variant_values?.[0] || '').toLowerCase();
-
   const isBoxy = name.includes('boxy') || name.includes('oversized');
   const isCostas = name.includes('costas') || variant.includes('costas');
-
   let custo = 0;
   if (isBoxy && isCostas) custo = 88.20;
   else if (isBoxy) custo = 86.70;
   else if (isCostas) custo = 48.20;
   else custo = 46.70;
-
   const lucro = valorLiq - custo;
   const margem = (lucro / total * 100).toFixed(1);
   return { lucro, margem, custo, isPix, taxa, isBoxy, isCostas };
 }
 
-function fmtBRL(v) {
-  return 'R$ ' + Math.abs(v).toFixed(2).replace('.', ',');
-}
-
+function fmtBRL(v) { return 'R$ ' + Math.abs(v).toFixed(2).replace('.',','); }
 function fmtDate(iso) {
   const d = new Date(iso);
-  return d.toLocaleDateString('pt-BR') + ' · ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) + 'h';
+  return d.toLocaleDateString('pt-BR') + ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
 }
 
 function getPaymentBadge(order) {
-  const method = (order.payment_details?.method || '').toLowerCase();
-  if (method.includes('pix')) return '<span class="badge bg-green">● Pix</span>';
-  if (method.includes('credit') || method.includes('cartao') || method.includes('crédito')) return '<span class="badge bg-gold">● Cartão</span>';
-  if (method.includes('boleto')) return '<span class="badge bg-blue">● Boleto</span>';
+  const m = (order.payment_details?.method || '').toLowerCase();
+  if (m.includes('pix')) return '<span class="badge bg-green">● Pix</span>';
+  if (m.includes('credit') || m.includes('cartao') || m.includes('crédito')) return '<span class="badge bg-gold">● Cartão</span>';
   return '<span class="badge bg-blue">● ' + (order.payment_details?.method || 'Outro') + '</span>';
 }
 
@@ -332,9 +262,7 @@ function getPaymentStatus(order) {
   const s = order.payment_status;
   if (s === 'paid') return '<span class="badge bg-green">● Pago</span>';
   if (s === 'pending') return '<span class="badge bg-yellow">● Aguardando</span>';
-  if (s === 'refunded') return '<span class="badge bg-red">● Devolvido</span>';
-  if (s === 'voided') return '<span class="badge bg-red">● Cancelado</span>';
-  return '<span class="badge bg-yellow">● ' + s + '</span>';
+  return '<span class="badge bg-red">● ' + s + '</span>';
 }
 
 function getOrderStatus(order, meta) {
@@ -371,45 +299,30 @@ function renderOrder(order) {
   const fin = calcProfit(order);
   const status = getOrderStatus(order, meta);
   const customer = order.customer;
-  const name = customer ? (customer.name || customer.first_name + ' ' + (customer.last_name || '')) : 'Cliente';
+  const name = customer ? (customer.name || (customer.first_name || '') + ' ' + (customer.last_name || '')).trim() : 'Cliente';
   const city = order.shipping_address?.city || '';
   const state = order.shipping_address?.province || '';
   const product = order.products?.[0];
   const productName = product?.name?.pt || product?.name?.['pt-BR'] || product?.name?.en || 'Produto';
   const variant = product?.variant_values?.join(' · ') || '';
-  const isBoxy = fin.isBoxy;
-  const isCostas = fin.isCostas;
-  const typeLabel = (isBoxy ? 'Oversized Boxy' : 'Tradicional') + (isCostas ? ' · Costas' : ' · Frente');
+  const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
+  const trackingCode = order.tracking_number || meta.trackingCode || '';
+  const trackingUrl = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode;
   const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
   const shippingCost = parseFloat(order.shipping_cost_customer || 0);
-
-  const trackingCode = order.tracking_number || meta.trackingCode || '';
-  const trackingUrl = trackingCode ? 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode : '#';
-
-  // Calcular prazo se hotCode já salvo
-  const hotDateStr = meta.hotDate || '';
 
   return `
 <div class="order-card" data-status="${status}" id="oc-${id}">
   <div class="order-header" onclick="toggleOrder('od-${id}','cb-${id}')">
+    <div><div class="o-num">#${order.number}</div><div class="o-num-sub">${fmtDate(order.created_at)}</div></div>
+    <div><div class="o-name">${name}</div><div class="o-name-sub">${city}${state ? ', ' + state : ''}</div></div>
     <div>
-      <div class="o-num">#${order.number}</div>
-      <div class="o-num-sub">${fmtDate(order.created_at)}</div>
-    </div>
-    <div>
-      <div class="o-name">${name}</div>
-      <div class="o-name-sub">${city}${state ? ', ' + state : ''}</div>
-    </div>
-    <div class="o-product">
       <div style="font-size:12px;font-weight:600;color:var(--text)">${typeLabel}</div>
       <div style="font-size:11px;color:var(--text3);margin-top:2px">${productName}${variant ? ' · ' + variant : ''}</div>
     </div>
     <div>${getPaymentStatus(order)}</div>
     <div id="status-badge-${id}">${getStatusBadge(status)}</div>
-    <div>
-      <div class="o-price">${fmtBRL(parseFloat(order.total))}</div>
-      <div class="o-profit">+ ${fmtBRL(fin.lucro)} lucro</div>
-    </div>
+    <div><div class="o-price">${fmtBRL(parseFloat(order.total))}</div><div class="o-profit">+ ${fmtBRL(fin.lucro)} lucro</div></div>
     <button class="expand-btn" id="cb-${id}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
@@ -417,20 +330,18 @@ function renderOrder(order) {
 
   <div class="order-detail" id="od-${id}">
 
-    <!-- COL 1: CLIENTE & PRODUTO -->
     <div>
-      <div class="dt-title">📦 Produto pedido</div>
-      <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:14px">
+      <div class="product-box">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">📦 Produto</div>
         <div style="font-size:14px;font-weight:600;color:var(--text)">${typeLabel}</div>
         <div style="font-size:12px;color:var(--text2);margin-top:3px">${productName}</div>
-        ${variant ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">${variant}</div>` : ''}
+        ${variant ? '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + variant + '</div>' : ''}
       </div>
-
       <div class="dt-title">👤 Cliente & entrega</div>
       <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
       <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email || '—'}</span></div>
       <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${order.shipping_address?.address || '—'}${order.shipping_address?.number ? ', ' + order.shipping_address.number : ''}${order.shipping_address?.floor ? ' ' + order.shipping_address.floor : ''}</span></div>
+      <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address || '—') + (order.shipping_address?.number ? ', ' + order.shipping_address.number : '') + (order.shipping_address?.floor ? ' ' + order.shipping_address.floor : '')}</span></div>
       <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state ? ', ' + state : ''}</span></div>
       <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">${order.shipping_address?.zipcode || '—'}</span></div>
       <div class="dt-row"><span class="dt-k">Frete escolhido</span><span class="dt-v">${shippingMethod}</span></div>
@@ -438,44 +349,30 @@ function renderOrder(order) {
       <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${getPaymentBadge(order)}</span></div>
     </div>
 
-    <!-- COL 2: FINANCEIRO -->
     <div>
       <div class="dt-title">💰 Financeiro</div>
       <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v">${fmtBRL(parseFloat(order.total))}</span></div>
-      ${fin.isPix ? `<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ${fmtBRL(parseFloat(order.total) * 0.05)}</span></div>` : ''}
+      ${fin.isPix ? '<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ' + fmtBRL(parseFloat(order.total) * 0.05) + '</span></div>' : ''}
       <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v red">− ${fmtBRL(fin.taxa)}</span></div>
       <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v red">− ${fmtBRL(fin.custo)}</span></div>
-      <div class="dt-row"><span class="dt-k">Tipo</span><span class="dt-v">${typeLabel}</span></div>
+      <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">${typeLabel}</span></div>
       <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2)">
         <div class="dt-row"><span class="dt-k" style="font-weight:600;color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v green" style="font-size:16px;font-weight:700">${fmtBRL(fin.lucro)}</span></div>
         <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v green">${fin.margem}%</span></div>
       </div>
     </div>
 
-    <!-- COL 3: PRODUÇÃO & RASTREIO -->
     <div>
-      <div class="dt-title">🏭 Produção & rastreio</div>
-
-      <!-- CÓDIGO HOTPRINTI em destaque -->
-      <div style="background:rgba(201,168,76,0.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px">
-        <div style="font-size:10px;font-weight:600;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">⭐ Código Hotprinti</div>
+      <div class="hot-box">
+        <div class="hot-box-label">⭐ Código Hotprinti</div>
         ${meta.hotCode
-          ? `<div style="font-size:15px;font-weight:700;color:var(--gold);letter-spacing:0.05em">${meta.hotCode}</div>
-             <div style="font-size:10px;color:var(--text3);margin-top:3px">Criado em Hotprinti · use para suporte</div>`
-          : `<div class="form-row" style="margin-top:0">
-               <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456" style="margin-top:0">
-               <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
-             </div>
-             <div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>`
+          ? '<div style="font-size:15px;font-weight:700;color:var(--gold)">' + meta.hotCode + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>'
+          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="hot-' + id + '" placeholder="Ex: HP-123456" style="margin-top:0"><button class="btn-save" onclick="saveHotprinti(' + "'" + id + "'" + ')">Salvar</button></div><div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>'
         }
       </div>
 
-      <!-- STEPS -->
       <div class="steps" style="margin-bottom:14px">
-        <div class="step done">
-          <div class="step-circle done">${checkmark()}</div>
-          Pedido recebido
-        </div>
+        <div class="step done"><div class="step-circle done">${checkmark()}</div>Pedido recebido</div>
         <div class="step${meta.hotCode ? ' done' : ''}" id="step-hot-${id}">
           <div class="step-circle${meta.hotCode ? ' done' : ''}" id="circle-hot-${id}">${meta.hotCode ? checkmark() : ''}</div>
           <span id="label-hot-${id}">${meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti'}</span>
@@ -484,19 +381,18 @@ function renderOrder(order) {
           <div class="step-circle${trackingCode ? ' done' : ''}" id="circle-track-${id}">${trackingCode ? checkmark() : ''}</div>
           <span id="label-track-${id}">${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
         </div>
-        <div class="step${status === 'enviado' || status === 'entregue' ? ' done' : ''}" id="step-sent-${id}">
-          <div class="step-circle${status === 'enviado' || status === 'entregue' ? ' done' : ''}" id="circle-sent-${id}">${status === 'enviado' || status === 'entregue' ? checkmark() : ''}</div>
+        <div class="step${status === 'enviado' || status === 'entregue' ? ' done' : ''}">
+          <div class="step-circle${status === 'enviado' || status === 'entregue' ? ' done' : ''}">${status === 'enviado' || status === 'entregue' ? checkmark() : ''}</div>
           <span>Pedido enviado</span>
         </div>
-        <div class="step${status === 'entregue' ? ' done' : ''}" id="step-done-${id}">
+        <div class="step${status === 'entregue' ? ' done' : ''}">
           <div class="step-circle${status === 'entregue' ? ' done' : ''}">${status === 'entregue' ? checkmark() : ''}</div>
           <span>Entregue</span>
         </div>
       </div>
 
-      <!-- PRAZO DE PRODUÇÃO -->
       <div id="prazo-wrap-${id}" style="${meta.hotCode ? '' : 'display:none;'}margin-bottom:14px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo de produção Hotprinti</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo Hotprinti (8 dias úteis)</div>
         <div class="prazo-wrap">
           <div class="prazo-bg"><div class="prazo-fill" id="prazo-fill-${id}" style="width:0%;background:var(--green)"></div></div>
           <div class="prazo-info"><span id="prazo-text-${id}">calculando...</span><span>8 dias úteis</span></div>
@@ -505,109 +401,76 @@ function renderOrder(order) {
 
       <div id="alert-${id}"></div>
 
-      <!-- RASTREIO -->
       <div style="margin-bottom:10px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">🚚 Código de rastreio (Correios)</div>
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">🚚 Rastreio Correios</div>
+        <div id="track-display-${id}">
         ${trackingCode
-          ? `<a class="tracking-link" href="${trackingUrl}" target="_blank">
-               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-               ${trackingCode}
-             </a>`
-          : `<div class="form-row" style="margin-top:4px">
-               <input class="form-input" id="track-${id}" placeholder="Ex: AB123456789BR" style="margin-top:0">
-               <button class="btn-save" onclick="saveTracking('${id}')">Salvar</button>
-             </div>`
+          ? '<a class="tracking-link" href="' + trackingUrl + '" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + trackingCode + '</a>'
+          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="track-' + id + '" placeholder="Ex: AB123456789BR" style="margin-top:0"><button class="btn-save" onclick="saveTracking(' + "'" + id + "'" + ')">Salvar</button></div>'
         }
-      </div>
-
-      <div id="alert-${id}"></div>
-
-      <div style="margin-bottom:10px">
-        <label class="field-label">Cód. pedido Hotprinti <span style="color:var(--red)">*</span></label>
-        <div class="form-row">
-          <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456" value="${meta.hotCode || ''}">
-          <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
-        </div>
-        ${hotSaved}
-      </div>
-
-      <div id="prazo-wrap-${id}" style="${meta.hotCode ? '' : 'display:none;'}margin-bottom:10px">
-        <label class="field-label">Prazo de produção (8 dias úteis)</label>
-        <div class="prazo-wrap">
-          <div class="prazo-bg"><div class="prazo-fill" id="prazo-fill-${id}" style="width:0%;background:var(--green)"></div></div>
-          <div class="prazo-info"><span id="prazo-text-${id}">calculando...</span><span>prazo máximo</span></div>
         </div>
       </div>
-
-      ${trackingCode ? `
-      <div style="margin-bottom:10px">
-        <label class="field-label">Rastreio Correios</label>
-        <a class="tracking-link" href="${trackingUrl}" target="_blank">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          ${trackingCode}
-        </a>
-      </div>` : ''}
 
       <div>
-        <label class="field-label">Observações</label>
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">📝 Observações</div>
         <textarea class="obs-area" id="obs-${id}" onblur="saveObs('${id}')" placeholder="Anotações sobre este pedido...">${meta.obs || ''}</textarea>
       </div>
     </div>
+
   </div>
 </div>`;
 }
 
 function saveHotprinti(id) {
-  const code = document.getElementById('hot-' + id).value.trim();
+  const input = document.getElementById('hot-' + id);
+  if (!input) return;
+  const code = input.value.trim();
   if (!code) return;
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].hotCode = code;
   orderMeta[id].hotDate = new Date().toISOString();
   saveMeta();
-
+  const hotBox = input.closest('.hot-box');
+  if (hotBox) {
+    hotBox.innerHTML = '<div class="hot-box-label">⭐ Código Hotprinti</div><div style="font-size:15px;font-weight:700;color:var(--gold)">' + code + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>';
+  }
   const c = document.getElementById('circle-hot-' + id);
-  c.classList.add('done');
-  c.innerHTML = checkmark();
-  document.getElementById('step-hot-' + id).classList.add('done');
-  document.getElementById('label-hot-' + id).textContent = 'Criado na Hotprinti · ' + code;
-  document.getElementById('prazo-wrap-' + id).style.display = '';
+  if (c) { c.classList.add('done'); c.innerHTML = checkmark(); }
+  const s = document.getElementById('step-hot-' + id);
+  if (s) s.classList.add('done');
+  const l = document.getElementById('label-hot-' + id);
+  if (l) l.textContent = 'Criado na Hotprinti';
+  const pw = document.getElementById('prazo-wrap-' + id);
+  if (pw) pw.style.display = '';
   updatePrazo(id);
 }
 
 function saveTracking(id) {
-  const code = document.getElementById('track-' + id)?.value.trim();
+  const input = document.getElementById('track-' + id);
+  if (!input) return;
+  const code = input.value.trim();
   if (!code) return;
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].trackingCode = code;
   saveMeta();
-
+  const url = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + code;
+  const display = document.getElementById('track-display-' + id);
+  if (display) {
+    display.innerHTML = '<a class="tracking-link" href="' + url + '" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + code + '</a>';
+  }
   const c = document.getElementById('circle-track-' + id);
   if (c) { c.classList.add('done'); c.innerHTML = checkmark(); }
   const s = document.getElementById('step-track-' + id);
-  if (s) { s.classList.add('done'); }
+  if (s) s.classList.add('done');
   const l = document.getElementById('label-track-' + id);
   if (l) l.textContent = 'Rastreio gerado';
-
-  // Substituir o campo pelo link clicável
-  const wrap = document.getElementById('track-' + id)?.closest('div');
-  if (wrap) {
-    const url = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + code;
-    wrap.innerHTML = `<a class="tracking-link" href="${url}" target="_blank">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      ${code}
-    </a>`;
-  }
 }
 
 function saveObs(id) {
-  const obs = document.getElementById('obs-' + id).value;
+  const obs = document.getElementById('obs-' + id)?.value || '';
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].obs = obs;
   saveMeta();
-}
-
-function checkmark() {
-  return '<svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 6l3 3 5-5" stroke="#0d0d0d" stroke-width="1.8"/></svg>';
 }
 
 function updatePrazo(id) {
@@ -617,8 +480,7 @@ function updatePrazo(id) {
   let d = new Date(meta.hotDate);
   let util = 0;
   while (d < now) {
-    const dow = d.getDay();
-    if (dow !== 0 && dow !== 6) util++;
+    if (d.getDay() !== 0 && d.getDay() !== 6) util++;
     d.setDate(d.getDate() + 1);
   }
   const pct = Math.min(Math.round((util / 8) * 100), 100);
@@ -656,42 +518,36 @@ function showTab(tab, el) {
   });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
-  const titles = {monitor:'Monitoramento de pedidos', stats:'Estatísticas', config:'Custos & Configurações'};
+  const titles = {monitor:'Monitoramento de pedidos',stats:'Estatísticas',config:'Custos & Configurações'};
   document.getElementById('page-title').textContent = titles[tab];
 }
 
 function updateMetrics(orders) {
   const now = new Date();
-  const mesAtual = now.getMonth();
-  const anoAtual = now.getFullYear();
+  const mes = now.getMonth();
+  const ano = now.getFullYear();
   const hoje = now.toDateString();
-
   const mesOrders = orders.filter(o => {
     const d = new Date(o.created_at);
-    return d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+    return d.getMonth() === mes && d.getFullYear() === ano;
   });
-
   const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
   const fat = mesOrders.reduce((s, o) => s + parseFloat(o.total), 0);
   const lucroTotal = mesOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
   const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
   const ticket = mesOrders.length ? fat / mesOrders.length : 0;
   const margem = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
-
   document.getElementById('m-hoje').textContent = hojeCount;
   document.getElementById('m-fat').textContent = fmtBRL(fat);
-  document.getElementById('m-fat-sub').textContent = now.toLocaleString('pt-BR', {month:'long'}) + ' ' + anoAtual;
+  document.getElementById('m-fat-sub').textContent = now.toLocaleString('pt-BR',{month:'long'}) + ' ' + ano;
   document.getElementById('m-lucro').textContent = fmtBRL(lucroTotal);
   document.getElementById('m-lucro-sub').textContent = 'margem ' + margem + '%';
   document.getElementById('m-pendentes').textContent = pendentes;
   document.getElementById('m-ticket').textContent = fmtBRL(ticket);
-
-  // coleções
   const colCounts = {twd:0,spn:0,boys:0,tvd:0,inv:0,marty:0};
   mesOrders.forEach(o => {
     const p = o.products?.[0];
-    const name = p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '';
-    const col = getCollection(name);
+    const col = getCollection(p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '');
     if (col) colCounts[col]++;
   });
   Object.keys(colCounts).forEach(k => {
@@ -705,31 +561,23 @@ async function loadOrders() {
   const statusEl = document.getElementById('sync-status');
   btn.classList.add('spinning');
   statusEl.textContent = 'Sincronizando...';
-
   try {
     const res = await fetch('/api/orders?per_page=50');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const orders = await res.json();
-
     if (!Array.isArray(orders)) throw new Error('Resposta inválida');
-
     document.getElementById('api-status').className = 'badge bg-green';
     document.getElementById('api-status').textContent = '● Conectado';
-
     updateMetrics(orders);
-
     const list = document.getElementById('orders-list');
     if (orders.length === 0) {
       list.innerHTML = '<div class="empty">Nenhum pedido encontrado</div>';
     } else {
       list.innerHTML = orders.map(o => renderOrder(o)).join('');
-      orders.forEach(o => {
-        if (orderMeta[o.number]?.hotDate) updatePrazo(o.number);
-      });
+      orders.forEach(o => { if (orderMeta[o.number]?.hotDate) updatePrazo(o.number); });
     }
-
     const now = new Date();
-    statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) + 'h';
+    statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
   } catch (err) {
     statusEl.textContent = 'Erro: ' + err.message;
     document.getElementById('api-status').className = 'badge bg-red';
@@ -740,10 +588,7 @@ async function loadOrders() {
   }
 }
 
-setInterval(() => {
-  Object.keys(orderMeta).forEach(id => updatePrazo(id));
-}, 60000);
-
+setInterval(() => { Object.keys(orderMeta).forEach(id => updatePrazo(id)); }, 60000);
 loadOrders();
 </script>
 </body>
