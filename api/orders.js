@@ -8,7 +8,8 @@ export default async function handler(req, res) {
 
   try {
     const { per_page = 50, page = 1 } = req.query;
-    const url = `https://api.nuvemshop.com.br/v1/${STORE_ID}/orders?per_page=${per_page}&page=${page}`;
+    const since = '2025-06-21T00:00:00-03:00';
+    const url = `https://api.nuvemshop.com.br/v1/${STORE_ID}/orders?per_page=${per_page}&page=${page}&created_at_min=${encodeURIComponent(since)}`;
 
     const response = await fetch(url, {
       headers: {
