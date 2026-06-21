@@ -334,7 +334,7 @@ function renderOrder(order) {
   const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
 
   // Rastreio vem da API Nuvemshop; campo manual só como fallback se API não retornar
-  const trackingCode = order.tracking_number || order.tracking_code || '';
+  const trackingCode = order.tracking_number || order.tracking_code || order.shipping_tracking_number || (order.fulfillments?.[0]?.tracking_number) || '';
   const trackingUrl = trackingCode ? 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode : '';
 
   const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
