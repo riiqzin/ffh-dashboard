@@ -57,7 +57,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .filter-btn:hover,.filter-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
 .order-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
 .order-card:hover{border-color:var(--border2);}
-.order-header{padding:14px 18px;display:grid;grid-template-columns:150px 1fr 180px 110px 120px 110px 36px;align-items:center;gap:10px;cursor:pointer;}
+.order-header{padding:14px 18px;display:grid;grid-template-columns:150px 1fr 160px 110px 120px 110px 36px;align-items:center;gap:10px;cursor:pointer;}
 .o-num{font-size:13px;font-weight:600;color:var(--gold);}
 .o-num-sub{font-size:11px;color:var(--text3);margin-top:1px;}
 .o-name{font-size:13px;font-weight:500;}
@@ -95,7 +95,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .btn-save{padding:7px 12px;background:rgba(201,168,76,.12);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-save:hover{background:rgba(201,168,76,.22);}
 .prazo-wrap{margin-top:6px;}
-.prazo-bg{background:var(--bg4);border-radius:4px;height:6px;overflow:hidden;}
+.prazo-bg{background:var(--bg4);border-radius:4px;height:5px;overflow:hidden;}
 .prazo-fill{height:100%;border-radius:4px;transition:width .5s,background .3s;}
 .prazo-info{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px;}
 .tracking-link{color:var(--blue);text-decoration:none;font-size:12px;display:inline-flex;align-items:center;gap:4px;}
@@ -108,7 +108,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .hot-box{background:rgba(201,168,76,.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px;}
 .hot-box-label{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
 .product-box{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:14px;}
-.info-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:4px;font-size:11px;background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,.2);margin-top:6px;}
 </style>
 </head>
 <body>
@@ -219,32 +218,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </main>
 
 <script>
+const COSTS = {'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
 const orderMeta = JSON.parse(localStorage.getItem('ffh-order-meta') || '{}');
+
 function saveMeta() { localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta)); }
-
-// Feriados nacionais fixos (MM-DD)
-const FERIADOS = ['01-01','04-21','05-01','09-07','10-12','11-02','11-15','12-25'];
-
-function isUtilDay(date) {
-  const dow = date.getDay();
-  if (dow === 0 || dow === 6) return false;
-  const mm = String(date.getMonth()+1).padStart(2,'0');
-  const dd = String(date.getDate()).padStart(2,'0');
-  return !FERIADOS.includes(mm+'-'+dd);
-}
-
-function diasUteis(from, to) {
-  let count = 0;
-  let d = new Date(from);
-  d.setHours(0,0,0,0);
-  const end = new Date(to);
-  end.setHours(0,0,0,0);
-  while (d < end) {
-    if (isUtilDay(d)) count++;
-    d.setDate(d.getDate()+1);
-  }
-  return count;
-}
 
 function calcProfit(order) {
   const total = parseFloat(order.total);
@@ -258,13 +235,17 @@ function calcProfit(order) {
   const variant = (product?.variant_values?.[0] || '').toLowerCase();
   const isBoxy = name.includes('boxy') || name.includes('oversized');
   const isCostas = name.includes('costas') || variant.includes('costas');
-  let custo = isBoxy && isCostas ? 88.20 : isBoxy ? 86.70 : isCostas ? 48.20 : 46.70;
+  let custo = 0;
+  if (isBoxy && isCostas) custo = 88.20;
+  else if (isBoxy) custo = 86.70;
+  else if (isCostas) custo = 48.20;
+  else custo = 46.70;
   const lucro = valorLiq - custo;
   const margem = (lucro / total * 100).toFixed(1);
   return { lucro, margem, custo, isPix, taxa, isBoxy, isCostas };
 }
 
-function fmtBRL(v) { return 'R$\u00a0' + Math.abs(v).toFixed(2).replace('.',','); }
+function fmtBRL(v) { return 'R$ ' + Math.abs(v).toFixed(2).replace('.',','); }
 function fmtDate(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('pt-BR') + ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
@@ -312,160 +293,132 @@ function getCollection(name) {
   return null;
 }
 
-function getCollectionName(name) {
-  const n = (name || '').toLowerCase();
-  if (n.includes('walking dead') || n.includes('twd')) return 'The Walking Dead';
-  if (n.includes('supernatural') || n.includes('spn')) return 'Supernatural';
-  if (n.includes('the boys') || n.includes('boys')) return 'The Boys';
-  if (n.includes('vampire') || n.includes('tvd')) return 'The Vampire Diaries';
-  if (n.includes('invincible')) return 'Invincible';
-  if (n.includes('marty')) return 'Marty Supreme';
-  return null;
-}
-
 function renderOrder(order) {
   const id = order.number;
   const meta = orderMeta[id] || {};
   const fin = calcProfit(order);
   const status = getOrderStatus(order, meta);
   const customer = order.customer;
-  const name = customer ? ((customer.name || (customer.first_name || '') + ' ' + (customer.last_name || '')).trim()) : 'Cliente';
+  const name = customer ? (customer.name || (customer.first_name || '') + ' ' + (customer.last_name || '')).trim() : 'Cliente';
   const city = order.shipping_address?.city || '';
   const state = order.shipping_address?.province || '';
   const product = order.products?.[0];
   const productName = product?.name?.pt || product?.name?.['pt-BR'] || product?.name?.en || 'Produto';
   const variant = product?.variant_values?.join(' · ') || '';
   const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
-  const collectionName = getCollectionName(productName);
-  const trackingCode = order.tracking_number || '';
+  const trackingCode = order.tracking_number || meta.trackingCode || '';
   const trackingUrl = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode;
   const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
   const shippingCost = parseFloat(order.shipping_cost_customer || 0);
 
-  // Calcular dias úteis em produção a partir da data do pedido
-  const orderDate = new Date(order.created_at);
-  const now = new Date();
-  const duProducao = diasUteis(orderDate, now);
-
-  // Se enviado, calcular quando foi enviado vs data do pedido
-  const isEnviado = status === 'enviado' || status === 'entregue';
-  const shippedDate = order.shipped_at ? new Date(order.shipped_at) : null;
-  const duEnvio = shippedDate ? diasUteis(orderDate, shippedDate) : null;
-
-  // Prazo: se já enviado mostra histórico, senão mostra contagem atual
-  const prazoLabel = isEnviado && duEnvio !== null
-    ? 'Enviado após ' + duEnvio + ' dia' + (duEnvio !== 1 ? 's' : '') + ' útil' + (duEnvio !== 1 ? 'eis' : '') + ' em produção'
-    : duProducao + ' / 8 dias úteis em produção';
-  const prazoPct = isEnviado ? (duEnvio !== null ? Math.min(Math.round(duEnvio/8*100),100) : 100) : Math.min(Math.round(duProducao/8*100),100);
-  const prazoColor = isEnviado ? 'var(--blue)' : duProducao >= 8 ? 'var(--red)' : duProducao >= 6 ? 'var(--yellow)' : 'var(--green)';
-
-  return \`
-<div class="order-card" data-status="\${status}" id="oc-\${id}">
-  <div class="order-header" onclick="toggleOrder('od-\${id}','cb-\${id}')">
-    <div><div class="o-num">#\${order.number}</div><div class="o-num-sub">\${fmtDate(order.created_at)}</div></div>
-    <div><div class="o-name">\${name}</div><div class="o-name-sub">\${city}\${state ? ', ' + state : ''}</div></div>
+  return `
+<div class="order-card" data-status="${status}" id="oc-${id}">
+  <div class="order-header" onclick="toggleOrder('od-${id}','cb-${id}')">
+    <div><div class="o-num">#${order.number}</div><div class="o-num-sub">${fmtDate(order.created_at)}</div></div>
+    <div><div class="o-name">${name}</div><div class="o-name-sub">${city}${state ? ', ' + state : ''}</div></div>
     <div>
-      <div style="font-size:12px;font-weight:600;color:var(--text)">\${typeLabel}</div>
-      <div style="font-size:11px;color:var(--gold);margin-top:2px">\${collectionName || productName}</div>
-      \${variant ? '<div style="font-size:11px;color:var(--text3);margin-top:1px">' + variant + '</div>' : ''}
+      <div style="font-size:12px;font-weight:600;color:var(--text)">${typeLabel}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${productName}${variant ? ' · ' + variant : ''}</div>
     </div>
-    <div>\${getPaymentStatus(order)}</div>
-    <div id="status-badge-\${id}">\${getStatusBadge(status)}</div>
-    <div><div class="o-price">\${fmtBRL(parseFloat(order.total))}</div><div class="o-profit">+ \${fmtBRL(fin.lucro)} lucro</div></div>
-    <button class="expand-btn" id="cb-\${id}">
+    <div>${getPaymentStatus(order)}</div>
+    <div id="status-badge-${id}">${getStatusBadge(status)}</div>
+    <div><div class="o-price">${fmtBRL(parseFloat(order.total))}</div><div class="o-profit">+ ${fmtBRL(fin.lucro)} lucro</div></div>
+    <button class="expand-btn" id="cb-${id}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
   </div>
 
-  <div class="order-detail" id="od-\${id}">
+  <div class="order-detail" id="od-${id}">
 
     <div>
       <div class="product-box">
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">📦 Produto</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text)">\${typeLabel}</div>
-        \${collectionName ? '<div style="font-size:13px;color:var(--gold);margin-top:3px;font-weight:500">' + collectionName + '</div>' : ''}
-        <div style="font-size:12px;color:var(--text2);margin-top:2px">\${productName}</div>
-        \${variant ? '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + variant + '</div>' : ''}
+        <div style="font-size:14px;font-weight:600;color:var(--text)">${typeLabel}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">${productName}</div>
+        ${variant ? '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + variant + '</div>' : ''}
       </div>
       <div class="dt-title">👤 Cliente & entrega</div>
-      <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">\${name}</span></div>
-      <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">\${customer?.email || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">\${customer?.phone || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">\${(order.shipping_address?.address || '—') + (order.shipping_address?.number ? ', ' + order.shipping_address.number : '') + (order.shipping_address?.floor ? ' ' + order.shipping_address.floor : '')}</span></div>
-      <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">\${city}\${state ? ', ' + state : ''}</span></div>
-      <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">\${order.shipping_address?.zipcode || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Frete</span><span class="dt-v">\${shippingMethod}</span></div>
-      <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">\${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
-      <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">\${getPaymentBadge(order)}</span></div>
+      <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
+      <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email || '—'}</span></div>
+      <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone || '—'}</span></div>
+      <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address || '—') + (order.shipping_address?.number ? ', ' + order.shipping_address.number : '') + (order.shipping_address?.floor ? ' ' + order.shipping_address.floor : '')}</span></div>
+      <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state ? ', ' + state : ''}</span></div>
+      <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">${order.shipping_address?.zipcode || '—'}</span></div>
+      <div class="dt-row"><span class="dt-k">Frete escolhido</span><span class="dt-v">${shippingMethod}</span></div>
+      <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
+      <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${getPaymentBadge(order)}</span></div>
     </div>
 
     <div>
       <div class="dt-title">💰 Financeiro</div>
-      <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v">\${fmtBRL(parseFloat(order.total))}</span></div>
-      \${fin.isPix ? '<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ' + fmtBRL(parseFloat(order.total) * 0.05) + '</span></div>' : ''}
-      <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v red">− \${fmtBRL(fin.taxa)}</span></div>
-      <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v red">− \${fmtBRL(fin.custo)}</span></div>
-      <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">\${typeLabel}</span></div>
+      <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v">${fmtBRL(parseFloat(order.total))}</span></div>
+      ${fin.isPix ? '<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ' + fmtBRL(parseFloat(order.total) * 0.05) + '</span></div>' : ''}
+      <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v red">− ${fmtBRL(fin.taxa)}</span></div>
+      <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v red">− ${fmtBRL(fin.custo)}</span></div>
+      <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">${typeLabel}</span></div>
       <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2)">
-        <div class="dt-row"><span class="dt-k" style="font-weight:600;color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v green" style="font-size:16px;font-weight:700">\${fmtBRL(fin.lucro)}</span></div>
-        <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v green">\${fin.margem}%</span></div>
+        <div class="dt-row"><span class="dt-k" style="font-weight:600;color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v green" style="font-size:16px;font-weight:700">${fmtBRL(fin.lucro)}</span></div>
+        <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v green">${fin.margem}%</span></div>
       </div>
     </div>
 
     <div>
       <div class="hot-box">
         <div class="hot-box-label">⭐ Código Hotprinti</div>
-        \${meta.hotCode
+        ${meta.hotCode
           ? '<div style="font-size:15px;font-weight:700;color:var(--gold)">' + meta.hotCode + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>'
-          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="hot-' + id + '" placeholder="Ex: HP-123456" style="margin-top:0"><button class="btn-save" onclick="saveHotprinti(\'' + id + '\')">Salvar</button></div><div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>'
+          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="hot-' + id + '" placeholder="Ex: HP-123456" style="margin-top:0"><button class="btn-save" onclick="saveHotprinti(' + "'" + id + "'" + ')">Salvar</button></div><div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>'
         }
       </div>
 
       <div class="steps" style="margin-bottom:14px">
-        <div class="step done"><div class="step-circle done">\${checkmark()}</div>Pedido recebido</div>
-        <div class="step\${meta.hotCode ? ' done' : ''}" id="step-hot-\${id}">
-          <div class="step-circle\${meta.hotCode ? ' done' : ''}" id="circle-hot-\${id}">\${meta.hotCode ? checkmark() : ''}</div>
-          <span id="label-hot-\${id}">\${meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti'}</span>
+        <div class="step done"><div class="step-circle done">${checkmark()}</div>Pedido recebido</div>
+        <div class="step${meta.hotCode ? ' done' : ''}" id="step-hot-${id}">
+          <div class="step-circle${meta.hotCode ? ' done' : ''}" id="circle-hot-${id}">${meta.hotCode ? checkmark() : ''}</div>
+          <span id="label-hot-${id}">${meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti'}</span>
         </div>
-        <div class="step\${trackingCode ? ' done' : ''}" id="step-track-\${id}">
-          <div class="step-circle\${trackingCode ? ' done' : ''}" id="circle-track-\${id}">\${trackingCode ? checkmark() : ''}</div>
-          <span>\${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
+        <div class="step${trackingCode ? ' done' : ''}" id="step-track-${id}">
+          <div class="step-circle${trackingCode ? ' done' : ''}" id="circle-track-${id}">${trackingCode ? checkmark() : ''}</div>
+          <span id="label-track-${id}">${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
         </div>
-        <div class="step\${isEnviado ? ' done' : ''}">
-          <div class="step-circle\${isEnviado ? ' done' : ''}">\${isEnviado ? checkmark() : ''}</div>
+        <div class="step${status === 'enviado' || status === 'entregue' ? ' done' : ''}">
+          <div class="step-circle${status === 'enviado' || status === 'entregue' ? ' done' : ''}">${status === 'enviado' || status === 'entregue' ? checkmark() : ''}</div>
           <span>Pedido enviado</span>
         </div>
-        <div class="step\${status === 'entregue' ? ' done' : ''}">
-          <div class="step-circle\${status === 'entregue' ? ' done' : ''}">\${status === 'entregue' ? checkmark() : ''}</div>
+        <div class="step${status === 'entregue' ? ' done' : ''}">
+          <div class="step-circle${status === 'entregue' ? ' done' : ''}">${status === 'entregue' ? checkmark() : ''}</div>
           <span>Entregue</span>
         </div>
       </div>
 
-      <div style="margin-bottom:14px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo Hotprinti</div>
+      <div id="prazo-wrap-${id}" style="${meta.hotCode ? '' : 'display:none;'}margin-bottom:14px">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo Hotprinti (8 dias úteis)</div>
         <div class="prazo-wrap">
-          <div class="prazo-bg"><div class="prazo-fill" style="width:\${prazoPct}%;background:\${prazoColor}"></div></div>
-          <div class="prazo-info"><span style="color:\${duProducao >= 8 && !isEnviado ? 'var(--red)' : 'var(--text3)'}">\${prazoLabel}</span><span>8 dias úteis</span></div>
+          <div class="prazo-bg"><div class="prazo-fill" id="prazo-fill-${id}" style="width:0%;background:var(--green)"></div></div>
+          <div class="prazo-info"><span id="prazo-text-${id}">calculando...</span><span>8 dias úteis</span></div>
         </div>
-        \${duProducao >= 8 && !isEnviado ? '<div class="alert-box" style="margin-top:8px;margin-bottom:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Prazo esgotado — entre em contato com a Hotprinti</div>' : ''}
       </div>
+
+      <div id="alert-${id}"></div>
 
       <div style="margin-bottom:10px">
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">🚚 Rastreio Correios</div>
-        \${trackingCode
+        <div id="track-display-${id}">
+        ${trackingCode
           ? '<a class="tracking-link" href="' + trackingUrl + '" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + trackingCode + '</a>'
-          : '<div style="font-size:11px;color:var(--text3)">Aguardando inserção na Nuvemshop</div>'
+          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="track-' + id + '" placeholder="Ex: AB123456789BR" style="margin-top:0"><button class="btn-save" onclick="saveTracking(' + "'" + id + "'" + ')">Salvar</button></div>'
         }
+        </div>
       </div>
 
       <div>
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">📝 Observações</div>
-        <textarea class="obs-area" id="obs-\${id}" onblur="saveObs('\${id}')" placeholder="Anotações sobre este pedido...">\${meta.obs || ''}</textarea>
+        <textarea class="obs-area" id="obs-${id}" onblur="saveObs('${id}')" placeholder="Anotações sobre este pedido...">${meta.obs || ''}</textarea>
       </div>
     </div>
 
   </div>
-</div>\`;
+</div>`;
 }
 
 function saveHotprinti(id) {
@@ -475,6 +428,7 @@ function saveHotprinti(id) {
   if (!code) return;
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].hotCode = code;
+  orderMeta[id].hotDate = new Date().toISOString();
   saveMeta();
   const hotBox = input.closest('.hot-box');
   if (hotBox) {
@@ -486,6 +440,30 @@ function saveHotprinti(id) {
   if (s) s.classList.add('done');
   const l = document.getElementById('label-hot-' + id);
   if (l) l.textContent = 'Criado na Hotprinti';
+  const pw = document.getElementById('prazo-wrap-' + id);
+  if (pw) pw.style.display = '';
+  updatePrazo(id);
+}
+
+function saveTracking(id) {
+  const input = document.getElementById('track-' + id);
+  if (!input) return;
+  const code = input.value.trim();
+  if (!code) return;
+  orderMeta[id] = orderMeta[id] || {};
+  orderMeta[id].trackingCode = code;
+  saveMeta();
+  const url = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + code;
+  const display = document.getElementById('track-display-' + id);
+  if (display) {
+    display.innerHTML = '<a class="tracking-link" href="' + url + '" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + code + '</a>';
+  }
+  const c = document.getElementById('circle-track-' + id);
+  if (c) { c.classList.add('done'); c.innerHTML = checkmark(); }
+  const s = document.getElementById('step-track-' + id);
+  if (s) s.classList.add('done');
+  const l = document.getElementById('label-track-' + id);
+  if (l) l.textContent = 'Rastreio gerado';
 }
 
 function saveObs(id) {
@@ -493,6 +471,30 @@ function saveObs(id) {
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].obs = obs;
   saveMeta();
+}
+
+function updatePrazo(id) {
+  const meta = orderMeta[id];
+  if (!meta || !meta.hotDate) return;
+  const now = new Date();
+  let d = new Date(meta.hotDate);
+  let util = 0;
+  while (d < now) {
+    if (d.getDay() !== 0 && d.getDay() !== 6) util++;
+    d.setDate(d.getDate() + 1);
+  }
+  const pct = Math.min(Math.round((util / 8) * 100), 100);
+  const fill = document.getElementById('prazo-fill-' + id);
+  if (!fill) return;
+  fill.style.width = pct + '%';
+  fill.style.background = util >= 8 ? 'var(--red)' : util >= 6 ? 'var(--yellow)' : 'var(--green)';
+  document.getElementById('prazo-text-' + id).textContent = util + ' / 8 dias úteis';
+  if (util >= 8 && !meta.alerted) {
+    meta.alerted = true;
+    saveMeta();
+    const a = document.getElementById('alert-' + id);
+    if (a) a.innerHTML = '<div class="alert-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Prazo esgotado — entre em contato com a Hotprinti</div>';
+  }
 }
 
 function toggleOrder(detailId, btnId) {
@@ -522,20 +524,24 @@ function showTab(tab, el) {
 
 function updateMetrics(orders) {
   const now = new Date();
-  const mes = now.getMonth(), ano = now.getFullYear();
+  const mes = now.getMonth();
+  const ano = now.getFullYear();
   const hoje = now.toDateString();
-  const mesOrders = orders.filter(o => { const d = new Date(o.created_at); return d.getMonth()===mes && d.getFullYear()===ano; });
+  const mesOrders = orders.filter(o => {
+    const d = new Date(o.created_at);
+    return d.getMonth() === mes && d.getFullYear() === ano;
+  });
   const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
-  const fat = mesOrders.reduce((s,o) => s + parseFloat(o.total), 0);
-  const lucroTotal = mesOrders.reduce((s,o) => s + calcProfit(o).lucro, 0);
-  const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status==='paid').length;
-  const ticket = mesOrders.length ? fat/mesOrders.length : 0;
-  const margem = fat > 0 ? (lucroTotal/fat*100).toFixed(1) : 0;
+  const fat = mesOrders.reduce((s, o) => s + parseFloat(o.total), 0);
+  const lucroTotal = mesOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
+  const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
+  const ticket = mesOrders.length ? fat / mesOrders.length : 0;
+  const margem = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
   document.getElementById('m-hoje').textContent = hojeCount;
   document.getElementById('m-fat').textContent = fmtBRL(fat);
-  document.getElementById('m-fat-sub').textContent = now.toLocaleString('pt-BR',{month:'long'})+' '+ano;
+  document.getElementById('m-fat-sub').textContent = now.toLocaleString('pt-BR',{month:'long'}) + ' ' + ano;
   document.getElementById('m-lucro').textContent = fmtBRL(lucroTotal);
-  document.getElementById('m-lucro-sub').textContent = 'margem '+margem+'%';
+  document.getElementById('m-lucro-sub').textContent = 'margem ' + margem + '%';
   document.getElementById('m-pendentes').textContent = pendentes;
   document.getElementById('m-ticket').textContent = fmtBRL(ticket);
   const colCounts = {twd:0,spn:0,boys:0,tvd:0,inv:0,marty:0};
@@ -544,7 +550,10 @@ function updateMetrics(orders) {
     const col = getCollection(p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '');
     if (col) colCounts[col]++;
   });
-  Object.keys(colCounts).forEach(k => { const el = document.getElementById('c-'+k); if(el) el.textContent = colCounts[k]; });
+  Object.keys(colCounts).forEach(k => {
+    const el = document.getElementById('c-' + k);
+    if (el) el.textContent = colCounts[k];
+  });
 }
 
 async function loadOrders() {
@@ -561,21 +570,25 @@ async function loadOrders() {
     document.getElementById('api-status').textContent = '● Conectado';
     updateMetrics(orders);
     const list = document.getElementById('orders-list');
-    list.innerHTML = orders.length === 0
-      ? '<div class="empty">Nenhum pedido encontrado</div>'
-      : orders.map(o => renderOrder(o)).join('');
+    if (orders.length === 0) {
+      list.innerHTML = '<div class="empty">Nenhum pedido encontrado</div>';
+    } else {
+      list.innerHTML = orders.map(o => renderOrder(o)).join('');
+      orders.forEach(o => { if (orderMeta[o.number]?.hotDate) updatePrazo(o.number); });
+    }
     const now = new Date();
     statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
   } catch (err) {
     statusEl.textContent = 'Erro: ' + err.message;
     document.getElementById('api-status').className = 'badge bg-red';
     document.getElementById('api-status').textContent = '● Erro';
-    document.getElementById('orders-list').innerHTML = '<div class="empty">Erro ao carregar.<br><small>' + err.message + '</small></div>';
+    document.getElementById('orders-list').innerHTML = '<div class="empty">Erro ao carregar pedidos.<br><small>' + err.message + '</small></div>';
   } finally {
     btn.classList.remove('spinning');
   }
 }
 
+setInterval(() => { Object.keys(orderMeta).forEach(id => updatePrazo(id)); }, 60000);
 loadOrders();
 </script>
 </body>
