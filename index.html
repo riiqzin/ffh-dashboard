@@ -380,11 +380,14 @@ function renderOrder(order) {
   const isBoxy = fin.isBoxy;
   const isCostas = fin.isCostas;
   const typeLabel = (isBoxy ? 'Oversized Boxy' : 'Tradicional') + (isCostas ? ' · Costas' : ' · Frente');
+  const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
+  const shippingCost = parseFloat(order.shipping_cost_customer || 0);
 
   const trackingCode = order.tracking_number || meta.trackingCode || '';
   const trackingUrl = trackingCode ? 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode : '#';
 
-  const hotSaved = meta.hotCode ? `<div style="font-size:11px;color:var(--green);margin-top:4px">✓ ${meta.hotCode}</div>` : '';
+  // Calcular prazo se hotCode já salvo
+  const hotDateStr = meta.hotDate || '';
 
   return `
 <div class="order-card" data-status="${status}" id="oc-${id}">
@@ -398,8 +401,8 @@ function renderOrder(order) {
       <div class="o-name-sub">${city}${state ? ', ' + state : ''}</div>
     </div>
     <div class="o-product">
-      ${typeLabel.split(' · ')[0]}
-      <small>${typeLabel.split(' · ').slice(1).join(' · ')}${variant ? ' · ' + variant : ''}</small>
+      <div style="font-size:12px;font-weight:600;color:var(--text)">${typeLabel}</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:2px">${productName}${variant ? ' · ' + variant : ''}</div>
     </div>
     <div>${getPaymentStatus(order)}</div>
     <div id="status-badge-${id}">${getStatusBadge(status)}</div>
@@ -413,19 +416,31 @@ function renderOrder(order) {
   </div>
 
   <div class="order-detail" id="od-${id}">
+
+    <!-- COL 1: CLIENTE & PRODUTO -->
     <div>
-      <div class="dt-title">Cliente & entrega</div>
+      <div class="dt-title">📦 Produto pedido</div>
+      <div style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:600;color:var(--text)">${typeLabel}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">${productName}</div>
+        ${variant ? `<div style="font-size:11px;color:var(--text3);margin-top:2px">${variant}</div>` : ''}
+      </div>
+
+      <div class="dt-title">👤 Cliente & entrega</div>
       <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
       <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email || '—'}</span></div>
       <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone || '—'}</span></div>
       <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${order.shipping_address?.address || '—'}${order.shipping_address?.number ? ', ' + order.shipping_address.number : ''}${order.shipping_address?.floor ? ' ' + order.shipping_address.floor : ''}</span></div>
       <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state ? ', ' + state : ''}</span></div>
       <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">${order.shipping_address?.zipcode || '—'}</span></div>
+      <div class="dt-row"><span class="dt-k">Frete escolhido</span><span class="dt-v">${shippingMethod}</span></div>
+      <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
       <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${getPaymentBadge(order)}</span></div>
     </div>
 
+    <!-- COL 2: FINANCEIRO -->
     <div>
-      <div class="dt-title">Financeiro</div>
+      <div class="dt-title">💰 Financeiro</div>
       <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v">${fmtBRL(parseFloat(order.total))}</span></div>
       ${fin.isPix ? `<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ${fmtBRL(parseFloat(order.total) * 0.05)}</span></div>` : ''}
       <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v red">− ${fmtBRL(fin.taxa)}</span></div>
@@ -437,20 +452,37 @@ function renderOrder(order) {
       </div>
     </div>
 
+    <!-- COL 3: PRODUÇÃO & RASTREIO -->
     <div>
-      <div class="dt-title">Produção & rastreio</div>
-      <div class="steps">
+      <div class="dt-title">🏭 Produção & rastreio</div>
+
+      <!-- CÓDIGO HOTPRINTI em destaque -->
+      <div style="background:rgba(201,168,76,0.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px">
+        <div style="font-size:10px;font-weight:600;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">⭐ Código Hotprinti</div>
+        ${meta.hotCode
+          ? `<div style="font-size:15px;font-weight:700;color:var(--gold);letter-spacing:0.05em">${meta.hotCode}</div>
+             <div style="font-size:10px;color:var(--text3);margin-top:3px">Criado em Hotprinti · use para suporte</div>`
+          : `<div class="form-row" style="margin-top:0">
+               <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456" style="margin-top:0">
+               <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
+             </div>
+             <div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>`
+        }
+      </div>
+
+      <!-- STEPS -->
+      <div class="steps" style="margin-bottom:14px">
         <div class="step done">
           <div class="step-circle done">${checkmark()}</div>
           Pedido recebido
         </div>
         <div class="step${meta.hotCode ? ' done' : ''}" id="step-hot-${id}">
           <div class="step-circle${meta.hotCode ? ' done' : ''}" id="circle-hot-${id}">${meta.hotCode ? checkmark() : ''}</div>
-          <span id="label-hot-${id}">${meta.hotCode ? 'Criado na Hotprinti · ' + meta.hotCode : 'Criar na Hotprinti'}</span>
+          <span id="label-hot-${id}">${meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti'}</span>
         </div>
         <div class="step${trackingCode ? ' done' : ''}" id="step-track-${id}">
           <div class="step-circle${trackingCode ? ' done' : ''}" id="circle-track-${id}">${trackingCode ? checkmark() : ''}</div>
-          <span id="label-track-${id}">${trackingCode ? 'Rastreio: ' + trackingCode : 'Código de rastreio gerado'}</span>
+          <span id="label-track-${id}">${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
         </div>
         <div class="step${status === 'enviado' || status === 'entregue' ? ' done' : ''}" id="step-sent-${id}">
           <div class="step-circle${status === 'enviado' || status === 'entregue' ? ' done' : ''}" id="circle-sent-${id}">${status === 'enviado' || status === 'entregue' ? checkmark() : ''}</div>
@@ -460,6 +492,32 @@ function renderOrder(order) {
           <div class="step-circle${status === 'entregue' ? ' done' : ''}">${status === 'entregue' ? checkmark() : ''}</div>
           <span>Entregue</span>
         </div>
+      </div>
+
+      <!-- PRAZO DE PRODUÇÃO -->
+      <div id="prazo-wrap-${id}" style="${meta.hotCode ? '' : 'display:none;'}margin-bottom:14px">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo de produção Hotprinti</div>
+        <div class="prazo-wrap">
+          <div class="prazo-bg"><div class="prazo-fill" id="prazo-fill-${id}" style="width:0%;background:var(--green)"></div></div>
+          <div class="prazo-info"><span id="prazo-text-${id}">calculando...</span><span>8 dias úteis</span></div>
+        </div>
+      </div>
+
+      <div id="alert-${id}"></div>
+
+      <!-- RASTREIO -->
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">🚚 Código de rastreio (Correios)</div>
+        ${trackingCode
+          ? `<a class="tracking-link" href="${trackingUrl}" target="_blank">
+               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+               ${trackingCode}
+             </a>`
+          : `<div class="form-row" style="margin-top:4px">
+               <input class="form-input" id="track-${id}" placeholder="Ex: AB123456789BR" style="margin-top:0">
+               <button class="btn-save" onclick="saveTracking('${id}')">Salvar</button>
+             </div>`
+        }
       </div>
 
       <div id="alert-${id}"></div>
@@ -514,6 +572,31 @@ function saveHotprinti(id) {
   document.getElementById('label-hot-' + id).textContent = 'Criado na Hotprinti · ' + code;
   document.getElementById('prazo-wrap-' + id).style.display = '';
   updatePrazo(id);
+}
+
+function saveTracking(id) {
+  const code = document.getElementById('track-' + id)?.value.trim();
+  if (!code) return;
+  orderMeta[id] = orderMeta[id] || {};
+  orderMeta[id].trackingCode = code;
+  saveMeta();
+
+  const c = document.getElementById('circle-track-' + id);
+  if (c) { c.classList.add('done'); c.innerHTML = checkmark(); }
+  const s = document.getElementById('step-track-' + id);
+  if (s) { s.classList.add('done'); }
+  const l = document.getElementById('label-track-' + id);
+  if (l) l.textContent = 'Rastreio gerado';
+
+  // Substituir o campo pelo link clicável
+  const wrap = document.getElementById('track-' + id)?.closest('div');
+  if (wrap) {
+    const url = 'https://rastreamento.correios.com.br/app/index.php?objetos=' + code;
+    wrap.innerHTML = `<a class="tracking-link" href="${url}" target="_blank">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      ${code}
+    </a>`;
+  }
 }
 
 function saveObs(id) {
