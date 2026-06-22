@@ -537,8 +537,8 @@ function paymentStatusPill(order){
 
 function checkmark(){return`<svg viewBox="0 0 12 12" fill="none" width="9" height="9"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2"/></svg>`;}
 
-function calcBusinessDays(startIso){
-  let d=new Date(startIso);const end=new Date();let util=0;
+function calcBusinessDays(startIso,endIso){
+  let d=new Date(startIso);const end=endIso?new Date(endIso):new Date();let util=0;
   while(d<end){if(d.getDay()!==0&&d.getDay()!==6)util++;d.setDate(d.getDate()+1);}
   return util;
 }
@@ -577,7 +577,9 @@ function renderOrder(order){
   const shippingMethod=order.shipping_carrier_name||order.shipping_option||'—';
   const shippingCost=parseFloat(order.shipping_cost_customer||0);
 
+  const shippedAt=order.shipped_at||(order.fulfillments?.[0]?.shipped_at)||null;
   const diasUtil=calcBusinessDays(order.created_at);
+  const diasAteEnvio=shippedAt?calcBusinessDays(order.created_at,shippedAt):diasUtil;
   const pct=Math.min(Math.round((diasUtil/8)*100),100);
   const prazoColor=diasUtil>=8?'var(--coral)':diasUtil>=6?'var(--amber)':'var(--mint)';
 
@@ -608,7 +610,7 @@ function renderOrder(order){
     {done:true,label:'Pedido recebido'},
     {done:!!meta.hotCode,label:meta.hotCode?'Criado na Hotprinti':'Criar na Hotprinti'},
     {done:!!trackingCode,label:trackingCode?'Rastreio gerado':'Aguardando rastreio'},
-    {done:status==='enviado',label:status==='enviado'?`Pedido enviado — ${diasUtil} dias úteis após o pedido`:'Pedido enviado'},
+    {done:status==='enviado',label:status==='enviado'?`Pedido enviado — ${diasAteEnvio} dias úteis após o pedido`:'Pedido enviado'},
   ];
   const stepsHtml=steps.map(s=>`<div class="step-item${s.done?' done':''}"><div class="step-circle${s.done?' done':''}">${s.done?checkmark():''}</div><div class="step-text">${s.label}</div></div>`).join('');
 
