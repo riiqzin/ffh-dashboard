@@ -4,332 +4,1191 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — Fandom Fashion House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ─────────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────────── */
 :root {
-  --bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--bg4:#222222;
-  --border:#2a2a2a;--border2:#333333;
-  --gold:#c9a84c;--gold3:#8a6a1f;
-  --text:#f0f0f0;--text2:#a0a0a0;--text3:#555555;
-  --green:#22c55e;--green-bg:#0a1f10;
-  --red:#ef4444;--red-bg:#1f0a0a;
-  --yellow:#f59e0b;--yellow-bg:#1f1505;
-  --blue:#60a5fa;--blue-bg:#0a1220;
-  --orange:#f97316;--orange-bg:#1f0e05;
+  --bg:          #09090F;
+  --bg2:         #0F0F1A;
+  --bg3:         #141422;
+  --bg4:         #1A1A2E;
+  --bg5:         #222238;
+
+  --border:      #1E1E32;
+  --border2:     #262640;
+  --border3:     #30305A;
+
+  --gold:        #D4AF6A;
+  --gold-dim:    #9A7B3E;
+  --gold-glow:   rgba(212,175,106,.12);
+  --gold-ring:   rgba(212,175,106,.25);
+
+  --mint:        #6EE7B7;
+  --mint-dim:    #2D8A68;
+  --mint-bg:     rgba(110,231,183,.06);
+
+  --coral:       #F87171;
+  --coral-bg:    rgba(248,113,113,.07);
+  --coral-dim:   #7A2020;
+
+  --amber:       #FBBF24;
+  --amber-bg:    rgba(251,191,36,.07);
+
+  --sky:         #7DD3FC;
+  --sky-bg:      rgba(125,211,252,.07);
+
+  --violet:      #A78BFA;
+  --violet-bg:   rgba(167,139,250,.07);
+
+  --text:        #F0F0F8;
+  --text2:       #8888A8;
+  --text3:       #44445A;
+
+  --status-pending:    #FBBF24;
+  --status-production: #D4AF6A;
+  --status-shipped:    #6EE7B7;
+
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   18px;
+
+  --sidebar-w:   224px;
+  --topbar-h:    54px;
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;min-height:100vh;}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
-.sidebar-logo{padding:18px 20px 14px;border-bottom:1px solid var(--border);}
-.sidebar-logo-text{font-size:12px;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;}
-.sidebar-nav{flex:1;padding:14px 0;}
-.nav-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:10px 20px 5px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;color:var(--text2);font-size:13px;cursor:pointer;border-left:2px solid transparent;transition:all .15s;user-select:none;}
-.nav-item:hover{color:var(--text);background:var(--bg3);}
-.nav-item.active{color:var(--gold);background:rgba(201,168,76,.07);border-left-color:var(--gold);}
-.nav-item svg{width:15px;height:15px;flex-shrink:0;}
-.sidebar-footer{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);}
-.main{margin-left:220px;min-height:100vh;}
-.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90;}
-.topbar-title{font-size:14px;font-weight:600;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.sync-status{font-size:11px;color:var(--text3);}
-.btn-sync{display:flex;align-items:center;gap:6px;padding:6px 13px;background:rgba(201,168,76,.08);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
-.btn-sync:hover{background:rgba(201,168,76,.18);}
-.btn-sync svg{width:13px;height:13px;}
-.btn-sync.spinning svg{animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.content{padding:24px 28px;}
-.section-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
-.metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px;}
-.metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
-.metric-label{font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
-.metric-value{font-size:20px;font-weight:600;line-height:1;}
-.metric-value.gold{color:var(--gold);}
-.metric-value.green{color:var(--green);}
-.metric-value.orange{color:var(--yellow);}
-.metric-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-.collections-row{display:flex;gap:7px;margin-bottom:24px;flex-wrap:wrap;}
-.coll-chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);}
-.coll-chip b{color:var(--gold);margin-left:3px;}
 
-/* ── Toolbar: busca + filtros de período + filtros de status ── */
-.orders-header{margin-bottom:12px;}
-.orders-header-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.orders-header-row2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.search-wrap{position:relative;flex:1;max-width:280px;}
-.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);width:13px;height:13px;pointer-events:none;}
-.search-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px 6px 30px;color:var(--text);font-size:12px;outline:none;transition:border-color .15s;}
-.search-input:focus{border-color:var(--gold3);}
-.search-input::placeholder{color:var(--text3);}
-.filters{display:flex;gap:6px;flex-wrap:wrap;}
-.filter-btn{padding:5px 11px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;}
-.filter-btn:hover,.filter-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
-.period-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.period-presets{display:flex;gap:4px;}
-.preset-btn{padding:5px 9px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.preset-btn:hover,.preset-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
-.date-from-wrap{display:flex;align-items:center;gap:5px;}
-.date-label{font-size:11px;color:var(--text3);white-space:nowrap;}
-.date-input{padding:5px 8px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;outline:none;transition:border-color .15s;}
-.date-input:focus{border-color:var(--gold3);}
-.date-sep{font-size:11px;color:var(--text3);}
-.period-select{padding:5px 10px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;outline:none;transition:border-color .15s;}
-.period-select:focus{border-color:var(--gold3);}
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-.order-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
-.order-card:hover{border-color:var(--border2);}
-/* Indicador de atraso: card vermelho quando sem código Hotprinti há muitos dias */
-.order-card.atrasado{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.03);}
-.order-card.atrasado .order-header{background:rgba(239,68,68,.04);}
-.order-header{padding:14px 18px;display:grid;grid-template-columns:150px 1fr 160px 110px 120px 110px 36px;align-items:center;gap:10px;cursor:pointer;}
-.o-num{font-size:13px;font-weight:600;color:var(--gold);}
-.o-num-sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.o-name{font-size:13px;font-weight:500;}
-.o-name-sub{font-size:11px;color:var(--text3);margin-top:1px;}
-.o-price{font-size:14px;font-weight:600;text-align:right;}
-.o-profit{font-size:11px;color:var(--green);text-align:right;margin-top:2px;}
-.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;}
-.bg-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(34,197,94,.2);}
-.bg-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
-.bg-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2);}
-.bg-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
-.bg-gold{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2);}
-.bg-orange{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(249,115,22,.2);}
-.expand-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.expand-btn:hover{border-color:var(--gold3);color:var(--gold);}
-.order-detail{border-top:1px solid var(--border);padding:18px;display:none;background:var(--bg3);}
-.order-detail.open{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
-.dt-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
-.dt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
-.dt-row:last-child{border-bottom:none;}
-.dt-k{font-size:12px;color:var(--text3);}
-.dt-v{font-size:12px;color:var(--text);text-align:right;max-width:55%;word-break:break-word;}
-.dt-v.green{color:var(--green);}
-.dt-v.red{color:var(--red);}
-.dt-v.gold{color:var(--gold);}
-.steps{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.step{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--text3);}
-.step.done{color:var(--text2);}
-.step-circle{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.step-circle.done{background:var(--green);border-color:var(--green);}
-.form-input{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;transition:border-color .15s;}
-.form-input:focus{border-color:var(--gold3);}
-.form-input::placeholder{color:var(--text3);}
-.form-row{display:flex;gap:7px;align-items:center;margin-top:5px;}
-.form-row .form-input{margin-top:0;}
-.btn-save{padding:7px 12px;background:rgba(201,168,76,.12);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.btn-save:hover{background:rgba(201,168,76,.22);}
-/* Botão copiar */
-.btn-copy{padding:5px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;margin-left:8px;}
-.btn-copy:hover{border-color:var(--gold3);color:var(--gold);}
-.btn-copy.copied{border-color:var(--green);color:var(--green);}
-.prazo-wrap{margin-top:6px;}
-.prazo-bg{background:var(--bg4);border-radius:4px;height:5px;overflow:hidden;}
-.prazo-fill{height:100%;border-radius:4px;transition:width .5s,background .3s;}
-.prazo-info{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px;}
-.tracking-link{color:var(--blue);text-decoration:none;font-size:12px;display:inline-flex;align-items:center;gap:4px;}
-.tracking-link:hover{text-decoration:underline;}
-.obs-area{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;resize:vertical;min-height:56px;font-family:inherit;margin-top:5px;}
-.obs-area::placeholder{color:var(--text3);}
-.alert-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--red);display:flex;align-items:center;gap:7px;margin-bottom:10px;}
-/* Alerta criar Hotprinti */
-.alert-hot{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--orange);display:flex;align-items:center;gap:7px;margin-bottom:10px;}
-/* Histórico de ações */
-.history-box{background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-top:8px;}
-.history-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.history-item{font-size:11px;color:var(--text3);padding:3px 0;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:6px;}
-.history-item:last-child{border-bottom:none;}
-.history-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
-.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;}
-.config-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;max-width:480px;margin-bottom:20px;}
-.hot-box{background:rgba(201,168,76,.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px;}
-.hot-box-label{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
-.product-box{background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:12px;margin-bottom:14px;}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input, textarea, select { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR
+───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border3); }
+
+/* ─────────────────────────────────────────────
+   SIDEBAR
+───────────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  padding-bottom: 8px;
+}
+
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logo-mark {
+  width: 28px; height: 28px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-ring);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-logo-mark svg { width: 14px; height: 14px; color: var(--gold); }
+
+.sidebar-logo-info {}
+.sidebar-logo-brand {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.sidebar-logo-sub {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+
+.nav-section-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 12px 10px 5px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  color: var(--text2);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+  position: relative;
+  margin-bottom: 2px;
+}
+
+.nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.nav-item:hover {
+  color: var(--text);
+  background: var(--bg3);
+}
+
+.nav-item.active {
+  color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 2.5px;
+  background: var(--gold);
+  border-radius: 0 2px 2px 0;
+  margin-left: -10px;
+}
+
+.sidebar-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sidebar-footer-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 6px var(--mint-dim);
+}
+
+/* ─────────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────────── */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; }
+
+.topbar {
+  position: sticky; top: 0;
+  height: var(--topbar-h);
+  background: rgba(9,9,15,.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 90;
+}
+
+.topbar-left { display: flex; flex-direction: column; gap: 1px; }
+.topbar-eyebrow { font-size: 9px; font-weight: 600; color: var(--text3); letter-spacing: .14em; text-transform: uppercase; }
+.topbar-title { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.sync-status {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+.btn-sync {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-ring);
+  border-radius: var(--radius-md);
+  color: var(--gold);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: all .15s;
+  letter-spacing: .01em;
+}
+.btn-sync:hover { background: rgba(212,175,106,.2); border-color: var(--gold-dim); }
+.btn-sync svg { width: 12px; height: 12px; }
+.btn-sync.spinning svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─────────────────────────────────────────────
+   CONTENT
+───────────────────────────────────────────── */
+.content { padding: 28px 28px; }
+
+/* ─────────────────────────────────────────────
+   SECTION LABEL
+───────────────────────────────────────────── */
+.section-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─────────────────────────────────────────────
+   METRICS GRID
+───────────────────────────────────────────── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.metric-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 18px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.metric-card:hover { border-color: var(--border2); }
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+
+.metric-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.metric-icon.gold { background: var(--gold-glow); }
+.metric-icon.mint { background: var(--mint-bg); }
+.metric-icon.amber { background: var(--amber-bg); }
+.metric-icon.sky { background: var(--sky-bg); }
+.metric-icon.violet { background: var(--violet-bg); }
+
+.metric-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+}
+.metric-value.gold { color: var(--gold); }
+.metric-value.mint { color: var(--mint); }
+.metric-value.amber { color: var(--amber); }
+.metric-value.default { color: var(--text); }
+
+.metric-sub {
+  font-size: 10.5px;
+  color: var(--text3);
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────
+   COLLECTIONS ROW
+───────────────────────────────────────────── */
+.collections-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.coll-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  font-size: 11.5px;
+  color: var(--text2);
+  font-weight: 500;
+  transition: all .15s;
+}
+.coll-chip:hover { border-color: var(--border3); color: var(--text); }
+.coll-chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-ring);
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────
+   ORDERS TOOLBAR
+───────────────────────────────────────────── */
+.orders-toolbar {
+  margin-bottom: 14px;
+}
+.orders-toolbar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.orders-toolbar-bottom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  position: relative;
+  width: 260px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 10px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+  width: 13px; height: 13px;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 7px 10px 7px 32px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  transition: all .15s;
+}
+.search-input:focus { border-color: var(--gold-dim); background: var(--bg3); }
+.search-input::placeholder { color: var(--text3); }
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.pill-btn {
+  padding: 4px 10px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  background: transparent;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.pill-btn:hover { color: var(--text); }
+.pill-btn.active {
+  background: var(--bg4);
+  color: var(--gold);
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+.date-range-label { font-size: 10.5px; color: var(--text3); }
+.date-input-styled {
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  background: var(--bg3);
+  outline: none;
+  transition: border-color .15s;
+}
+.date-input-styled:focus { border-color: var(--gold-dim); }
+
+.toolbar-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+/* ─────────────────────────────────────────────
+   ORDER CARDS — signature left-bar
+───────────────────────────────────────────── */
+.order-card {
+  position: relative;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.order-card:hover { border-color: var(--border2); box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+
+/* Barra lateral de status — o elemento signature */
+.order-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--border2);
+  transition: background .2s;
+}
+.order-card[data-status="pendente"]::before  { background: var(--status-pending); }
+.order-card[data-status="producao"]::before  { background: var(--status-production); }
+.order-card[data-status="enviado"]::before   { background: var(--status-shipped); }
+
+.order-card.atrasado {
+  border-color: rgba(248,113,113,.3);
+  background: rgba(248,113,113,.02);
+}
+.order-card.atrasado::before { background: var(--coral); }
+
+/* Header do card */
+.order-header {
+  padding: 14px 18px 14px 22px;
+  display: grid;
+  grid-template-columns: 140px 1fr 180px 100px 90px 36px;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.o-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+.o-date {
+  font-size: 10.5px;
+  color: var(--text3);
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.o-customer { font-size: 13px; font-weight: 600; color: var(--text); }
+.o-location { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.o-collection { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.o-type       { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+.o-value      { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.o-profit     { font-size: 11px; color: var(--mint); margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+/* Status pills inline */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.status-pill-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+.sp-pending    { background: var(--amber-bg); color: var(--amber);  border: 1px solid rgba(251,191,36,.2); }
+.sp-pending    .status-pill-dot { background: var(--amber); }
+.sp-production { background: var(--gold-glow); color: var(--gold);  border: 1px solid var(--gold-ring); }
+.sp-production .status-pill-dot { background: var(--gold); }
+.sp-shipped    { background: var(--mint-bg);   color: var(--mint);  border: 1px solid rgba(110,231,183,.2); }
+.sp-shipped    .status-pill-dot { background: var(--mint); }
+.sp-paid       { background: var(--mint-bg);   color: var(--mint);  border: 1px solid rgba(110,231,183,.2); }
+.sp-paid       .status-pill-dot { background: var(--mint); }
+.sp-waiting    { background: var(--amber-bg);  color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
+.sp-waiting    .status-pill-dot { background: var(--amber); }
+.sp-pix        { background: var(--mint-bg);   color: var(--mint);  border: 1px solid rgba(110,231,183,.2); }
+.sp-card       { background: var(--gold-glow); color: var(--gold);  border: 1px solid var(--gold-ring); }
+.sp-blue       { background: var(--sky-bg);    color: var(--sky);   border: 1px solid rgba(125,211,252,.2); }
+
+.expand-btn {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text3);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.expand-btn:hover { border-color: var(--gold-dim); color: var(--gold); background: var(--gold-glow); }
+.expand-btn svg { width: 12px; height: 12px; transition: transform .2s; }
+
+/* ─────────────────────────────────────────────
+   ORDER DETAIL PANEL
+───────────────────────────────────────────── */
+.order-detail {
+  display: none;
+  border-top: 1px solid var(--border);
+  background: var(--bg3);
+}
+.order-detail.open { display: block; }
+
+.detail-inner {
+  padding: 20px 22px 20px 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+}
+
+.detail-col {}
+
+.dt-heading {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.dt-heading-icon { opacity: .8; }
+
+.dt-table { display: flex; flex-direction: column; gap: 0; }
+.dt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.dt-row:last-child { border-bottom: none; }
+.dt-k { font-size: 11.5px; color: var(--text3); flex-shrink: 0; }
+.dt-v { font-size: 11.5px; color: var(--text); text-align: right; max-width: 58%; word-break: break-word; }
+.dt-v.mint   { color: var(--mint); font-weight: 700; }
+.dt-v.coral  { color: var(--coral); }
+.dt-v.gold   { color: var(--gold); }
+.dt-v.big    { font-size: 16px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+
+/* Produto box */
+.product-box {
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.product-box-label {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px;
+}
+.product-box-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.product-box-sub  { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* Financeiro — total row */
+.fin-total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border2);
+}
+
+/* ─────────────────────────────────────────────
+   HOTPRINTI BOX
+───────────────────────────────────────────── */
+.hot-box {
+  background: rgba(212,175,106,.05);
+  border: 1px solid var(--gold-ring);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.hot-box-label {
+  font-size: 9px; font-weight: 700; color: var(--gold-dim);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.hot-code-wrap {
+  display: flex; align-items: center; gap: 8px;
+}
+.hot-code-val {
+  font-size: 17px; font-weight: 800; color: var(--gold);
+  letter-spacing: .02em; font-variant-numeric: tabular-nums;
+}
+.hot-hint { font-size: 10px; color: var(--text3); margin-top: 5px; }
+
+/* Input + save inline */
+.form-row { display: flex; gap: 6px; align-items: center; }
+.form-input {
+  flex: 1;
+  background: var(--bg5);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 7px 10px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  transition: border-color .15s;
+}
+.form-input:focus { border-color: var(--gold-dim); }
+.form-input::placeholder { color: var(--text3); }
+
+.btn-save {
+  padding: 7px 13px;
+  background: var(--gold-glow);
+  border: 1px solid var(--gold-ring);
+  border-radius: var(--radius-sm);
+  color: var(--gold);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-save:hover { background: rgba(212,175,106,.2); }
+
+.btn-copy {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 9px;
+  background: var(--bg5);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  color: var(--text2);
+  font-size: 10.5px;
+  font-weight: 500;
+  transition: all .15s;
+}
+.btn-copy:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-copy.copied { border-color: var(--mint-dim); color: var(--mint); }
+.btn-copy svg { width: 10px; height: 10px; }
+
+/* ─────────────────────────────────────────────
+   STEPS TRACKER
+───────────────────────────────────────────── */
+.steps-track {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 16px;
+}
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 26px;
+  bottom: -6px;
+  width: 1px;
+  background: var(--border2);
+}
+.step-item.done:not(:last-child)::after { background: var(--mint-dim); }
+.step-circle {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg4);
+  transition: all .2s;
+}
+.step-circle.done {
+  background: var(--mint);
+  border-color: var(--mint);
+}
+.step-circle.done svg { color: var(--bg); }
+.step-circle svg { width: 9px; height: 9px; }
+.step-text { font-size: 12px; color: var(--text3); padding-top: 2px; }
+.step-item.done .step-text { color: var(--text2); }
+
+/* ─────────────────────────────────────────────
+   PRAZO BAR
+───────────────────────────────────────────── */
+.prazo-wrap { margin-bottom: 16px; }
+.prazo-label {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.prazo-bar-bg {
+  background: var(--bg5);
+  border-radius: 3px;
+  height: 4px;
+  overflow: hidden;
+}
+.prazo-bar-fill { height: 100%; border-radius: 3px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.prazo-meta {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--text3); margin-top: 5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────
+   TRACKING
+───────────────────────────────────────────── */
+.tracking-wrap { margin-bottom: 14px; }
+.tracking-label {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.tracking-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 600; color: var(--sky);
+  transition: color .15s;
+}
+.tracking-link:hover { color: var(--text); }
+.tracking-link svg { width: 10px; height: 10px; }
+.tracking-empty { font-size: 11.5px; color: var(--text3); }
+
+/* ─────────────────────────────────────────────
+   OBS AREA
+───────────────────────────────────────────── */
+.obs-area {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  resize: vertical;
+  min-height: 52px;
+  font-family: inherit;
+  transition: border-color .15s;
+}
+.obs-area:focus { border-color: var(--gold-dim); }
+.obs-area::placeholder { color: var(--text3); }
+.obs-label {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px;
+}
+
+/* ─────────────────────────────────────────────
+   ALERTS
+───────────────────────────────────────────── */
+.alert {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.alert svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
+.alert-warn { background: var(--amber-bg); border: 1px solid rgba(251,191,36,.2); color: var(--amber); }
+.alert-err  { background: var(--coral-bg); border: 1px solid rgba(248,113,113,.2); color: var(--coral); }
+
+/* ─────────────────────────────────────────────
+   HISTORY BOX
+───────────────────────────────────────────── */
+.history-box {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  margin-top: 10px;
+}
+.history-title {
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;
+}
+.history-item {
+  font-size: 11px; color: var(--text3);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 7px;
+}
+.history-item:last-child { border-bottom: none; }
+.history-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%; background: var(--gold-dim); flex-shrink: 0; margin-top: 5px;
+}
+
+/* ─────────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--text3); font-size: 13px;
+}
+.empty-state svg { width: 32px; height: 32px; margin: 0 auto 10px; display: block; opacity: .3; }
+
+/* ─────────────────────────────────────────────
+   CONFIG TAB
+───────────────────────────────────────────── */
+.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 780px; }
+.config-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.config-card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 9px; font-weight: 700; color: var(--text3);
+  letter-spacing: .14em; text-transform: uppercase;
+  background: var(--bg3);
+}
+.config-card-body { padding: 4px 16px 8px; }
+
+.api-status-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 8px; padding: 8px 0;
+}
+.api-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--mint);
+  box-shadow: 0 0 8px var(--mint-dim);
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY
+───────────────────────────────────────────── */
+.text-gold   { color: var(--gold); }
+.text-mint   { color: var(--mint); }
+.text-coral  { color: var(--coral); }
+.text-text2  { color: var(--text2); }
+.text-text3  { color: var(--text3); }
+.fw-700      { font-weight: 700; }
+.fw-800      { font-weight: 800; }
+.tabnum      { font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
 
+<!-- ════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════ -->
 <aside class="sidebar">
   <div class="sidebar-logo">
-    <div class="sidebar-logo-text">Fandom Fashion House</div>
+    <div class="sidebar-logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+      </svg>
+    </div>
+    <div class="sidebar-logo-info">
+      <div class="sidebar-logo-brand">Fandom Fashion</div>
+      <div class="sidebar-logo-sub">Dashboard interno</div>
+    </div>
   </div>
+
   <nav class="sidebar-nav">
-    <div class="nav-label">Principal</div>
+    <div class="nav-section-label">Principal</div>
     <div class="nav-item active" onclick="showTab('monitor',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
       Monitoramento
     </div>
     <div class="nav-item" onclick="showTab('stats',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       Estatísticas
     </div>
-    <div class="nav-label">Configurações</div>
+
+    <div class="nav-section-label">Sistema</div>
     <div class="nav-item" onclick="showTab('config',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       Custos & Config
     </div>
   </nav>
-  <div class="sidebar-footer">FFH Dashboard v1.1</div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-footer-dot"></div>
+    FFH Dashboard v1.2
+  </div>
 </aside>
 
+<!-- ════════════════════════════════════════
+     MAIN
+════════════════════════════════════════ -->
 <main class="main">
+
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-title" id="page-title">Monitoramento de pedidos</div>
+    <div class="topbar-left">
+      <div class="topbar-eyebrow">Fandom Fashion House</div>
+      <div class="topbar-title" id="page-title">Monitoramento de pedidos</div>
+    </div>
     <div class="topbar-right">
-      <span class="sync-status" id="sync-status">Carregando...</span>
+      <span class="sync-status" id="sync-status">Carregando…</span>
       <button class="btn-sync" id="sync-btn" onclick="loadOrders()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
         Sincronizar
       </button>
     </div>
   </div>
 
+  <!-- CONTENT -->
   <div class="content">
 
+    <!-- ── TAB: MONITOR ── -->
     <div id="tab-monitor">
-      <div class="section-title">Resumo geral</div>
+
+      <!-- METRICS -->
+      <div class="section-label">Resumo do período</div>
       <div class="metrics-grid">
-        <div class="metric-card"><div class="metric-label">Pedidos hoje</div><div class="metric-value" id="m-hoje">—</div><div class="metric-sub">desde meia-noite</div></div>
-        <div class="metric-card"><div class="metric-label">Faturamento mês</div><div class="metric-value gold" id="m-fat">—</div><div class="metric-sub" id="m-fat-sub">carregando</div></div>
-        <div class="metric-card"><div class="metric-label">Lucro líquido</div><div class="metric-value green" id="m-lucro">—</div><div class="metric-sub" id="m-lucro-sub">margem</div></div>
-        <div class="metric-card"><div class="metric-label">Pendentes ação</div><div class="metric-value orange" id="m-pendentes">—</div><div class="metric-sub">sem código Hotprinti</div></div>
-        <div class="metric-card"><div class="metric-label">Ticket médio</div><div class="metric-value" id="m-ticket">—</div><div class="metric-sub">baseado no mês</div></div>
+
+        <div class="metric-card">
+          <div class="metric-icon amber">📅</div>
+          <div class="metric-label">Pedidos hoje</div>
+          <div class="metric-value default tabnum" id="m-hoje">—</div>
+          <div class="metric-sub">desde meia-noite</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon gold">💰</div>
+          <div class="metric-label">Faturamento</div>
+          <div class="metric-value gold tabnum" id="m-fat">—</div>
+          <div class="metric-sub" id="m-fat-sub">período selecionado</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon mint">📈</div>
+          <div class="metric-label">Lucro líquido</div>
+          <div class="metric-value mint tabnum" id="m-lucro">—</div>
+          <div class="metric-sub" id="m-lucro-sub">margem —%</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon amber">⚡</div>
+          <div class="metric-label">Pendentes ação</div>
+          <div class="metric-value amber tabnum" id="m-pendentes">—</div>
+          <div class="metric-sub">sem código Hotprinti</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon sky">🎯</div>
+          <div class="metric-label">Ticket médio</div>
+          <div class="metric-value default tabnum" id="m-ticket">—</div>
+          <div class="metric-sub">por pedido</div>
+        </div>
+
       </div>
 
-      <div class="section-title">Coleções — vendas do período</div>
-      <div class="collections-row">
-        <div class="coll-chip">The Walking Dead <b id="c-twd">0</b></div>
-        <div class="coll-chip">Supernatural <b id="c-spn">0</b></div>
-        <div class="coll-chip">The Boys <b id="c-boys">0</b></div>
-        <div class="coll-chip">The Vampire Diaries <b id="c-tvd">0</b></div>
-        <div class="coll-chip">Invincible <b id="c-inv">0</b></div>
-        <div class="coll-chip">Marty Supreme <b id="c-marty">0</b></div>
+      <!-- COLLECTIONS -->
+      <div class="section-label">Coleções — período selecionado</div>
+      <div class="collections-row" style="margin-bottom:28px">
+        <div class="coll-chip">The Walking Dead <span class="coll-chip-count" id="c-twd">0</span></div>
+        <div class="coll-chip">Supernatural <span class="coll-chip-count" id="c-spn">0</span></div>
+        <div class="coll-chip">The Boys <span class="coll-chip-count" id="c-boys">0</span></div>
+        <div class="coll-chip">The Vampire Diaries <span class="coll-chip-count" id="c-tvd">0</span></div>
+        <div class="coll-chip">Invincible <span class="coll-chip-count" id="c-inv">0</span></div>
+        <div class="coll-chip">Marty Supreme <span class="coll-chip-count" id="c-marty">0</span></div>
       </div>
 
-      <!-- Toolbar completa: busca + período + filtros de status -->
-      <div class="orders-header">
-        <div class="orders-header-row1">
-          <div class="section-title" style="margin:0">Pedidos</div>
+      <!-- ORDERS TOOLBAR -->
+      <div class="orders-toolbar">
+        <div class="orders-toolbar-top">
+          <div class="section-label" style="margin:0">Pedidos</div>
           <div class="search-wrap">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input class="search-input" id="search-input" placeholder="Buscar por nome ou #número..." oninput="applyFilters()">
+            <input class="search-input" id="search-input" placeholder="Buscar por nome ou #número…" oninput="applyFilters()">
           </div>
         </div>
-        <div class="orders-header-row2">
-          <div class="period-wrap">
-            <div class="period-presets">
-              <button class="preset-btn" onclick="setPreset('hoje',this)">Hoje</button>
-              <button class="preset-btn" onclick="setPreset('7',this)">7d</button>
-              <button class="preset-btn active" onclick="setPreset('30',this)">30d</button>
-              <button class="preset-btn" onclick="setPreset('0',this)">Todos</button>
-            </div>
-            <div class="date-from-wrap">
-              <span class="date-label">De</span>
-              <input type="date" class="date-input" id="date-from" onchange="setPreset('custom',null)">
-              <span class="date-sep">até</span>
-              <input type="date" class="date-input" id="date-to" onchange="setPreset('custom',null)">
-            </div>
+
+        <div class="orders-toolbar-bottom">
+          <!-- Period presets -->
+          <div class="toolbar-group">
+            <button class="pill-btn" onclick="setPreset('hoje',this)">Hoje</button>
+            <button class="pill-btn" onclick="setPreset('7',this)">7 dias</button>
+            <button class="pill-btn active" onclick="setPreset('30',this)">30 dias</button>
+            <button class="pill-btn" onclick="setPreset('0',this)">Todos</button>
           </div>
-          <div class="filters">
-            <button class="filter-btn active" onclick="setStatusFilter('todos',this)">Todos</button>
-            <button class="filter-btn" onclick="setStatusFilter('pendente',this)">Pendentes</button>
-            <button class="filter-btn" onclick="setStatusFilter('producao',this)">Em produção</button>
-            <button class="filter-btn" onclick="setStatusFilter('enviado',this)">Enviados</button>
+
+          <!-- Date range -->
+          <div class="date-range">
+            <span class="date-range-label">De</span>
+            <input type="date" class="date-input-styled" id="date-from" onchange="setPreset('custom',null)">
+            <span class="date-range-label">até</span>
+            <input type="date" class="date-input-styled" id="date-to" onchange="setPreset('custom',null)">
+          </div>
+
+          <div class="toolbar-sep"></div>
+
+          <!-- Status filters -->
+          <div class="toolbar-group">
+            <button class="pill-btn active" onclick="setStatusFilter('todos',this)">Todos</button>
+            <button class="pill-btn" onclick="setStatusFilter('pendente',this)">Pendentes</button>
+            <button class="pill-btn" onclick="setStatusFilter('producao',this)">Em produção</button>
+            <button class="pill-btn" onclick="setStatusFilter('enviado',this)">Enviados</button>
           </div>
         </div>
       </div>
-      <div id="orders-list"><div class="empty">Carregando pedidos...</div></div>
-    </div>
 
+      <!-- ORDERS LIST -->
+      <div id="orders-list">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Carregando pedidos…
+        </div>
+      </div>
+
+    </div><!-- /tab-monitor -->
+
+    <!-- ── TAB: STATS ── -->
     <div id="tab-stats" style="display:none">
-      <div class="empty">Estatísticas disponíveis quando houver mais pedidos</div>
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Estatísticas disponíveis quando houver mais pedidos
+      </div>
     </div>
 
+    <!-- ── TAB: CONFIG ── -->
     <div id="tab-config" style="display:none">
-      <div class="section-title">Custos de produção — Hotprinti</div>
-      <div class="config-card">
-        <div class="dt-row"><span class="dt-k">Tradicional · Frente</span><span class="dt-v gold">R$ 46,70</span></div>
-        <div class="dt-row"><span class="dt-k">Tradicional · Costas</span><span class="dt-v gold">R$ 48,20</span></div>
-        <div class="dt-row"><span class="dt-k">Oversized Boxy · Frente</span><span class="dt-v gold">R$ 86,70</span></div>
-        <div class="dt-row"><span class="dt-k">Oversized Boxy · Costas</span><span class="dt-v gold">R$ 88,20</span></div>
-      </div>
-      <div class="section-title">Taxas Nuvemshop</div>
-      <div class="config-card">
-        <div class="dt-row"><span class="dt-k">Cartão de crédito (14 dias)</span><span class="dt-v">3,69% + R$ 0,35</span></div>
-        <div class="dt-row"><span class="dt-k">Pix</span><span class="dt-v">0,99%</span></div>
-        <div class="dt-row"><span class="dt-k">Desconto Pix para cliente</span><span class="dt-v">5%</span></div>
-      </div>
-      <div class="section-title">Preços de venda</div>
-      <div class="config-card">
-        <div class="dt-row"><span class="dt-k">Tradicional</span><span class="dt-v">R$ 99,90</span></div>
-        <div class="dt-row"><span class="dt-k">Oversized Boxy</span><span class="dt-v">R$ 165,00</span></div>
-      </div>
-      <div class="section-title">Conexão API</div>
-      <div class="config-card">
-        <div class="dt-row"><span class="dt-k">Store ID</span><span class="dt-v gold">5191961</span></div>
-        <div class="dt-row"><span class="dt-k">App ID</span><span class="dt-v">16103</span></div>
-        <div class="dt-row"><span class="dt-k">Status</span><span class="badge bg-green" id="api-status">● Conectado</span></div>
-      </div>
-    </div>
 
-  </div>
+      <div class="section-label">Configurações de custo &amp; API</div>
+
+      <div class="config-grid">
+
+        <div class="config-card">
+          <div class="config-card-header">Custos de produção — Hotprinti</div>
+          <div class="config-card-body">
+            <div class="dt-row"><span class="dt-k">Tradicional · Frente</span><span class="dt-v gold">R$ 46,70</span></div>
+            <div class="dt-row"><span class="dt-k">Tradicional · Costas</span><span class="dt-v gold">R$ 48,20</span></div>
+            <div class="dt-row"><span class="dt-k">Oversized Boxy · Frente</span><span class="dt-v gold">R$ 86,70</span></div>
+            <div class="dt-row"><span class="dt-k">Oversized Boxy · Costas</span><span class="dt-v gold">R$ 88,20</span></div>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="config-card-header">Taxas Nuvemshop</div>
+          <div class="config-card-body">
+            <div class="dt-row"><span class="dt-k">Cartão de crédito</span><span class="dt-v">3,69% + R$ 0,35</span></div>
+            <div class="dt-row"><span class="dt-k">Pix</span><span class="dt-v">0,99%</span></div>
+            <div class="dt-row"><span class="dt-k">Desconto Pix ao cliente</span><span class="dt-v">5%</span></div>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="config-card-header">Preços de venda</div>
+          <div class="config-card-body">
+            <div class="dt-row"><span class="dt-k">Tradicional</span><span class="dt-v gold">R$ 99,90</span></div>
+            <div class="dt-row"><span class="dt-k">Oversized Boxy</span><span class="dt-v gold">R$ 165,00</span></div>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <div class="config-card-header">Conexão API Nuvemshop</div>
+          <div class="config-card-body">
+            <div class="dt-row"><span class="dt-k">Store ID</span><span class="dt-v gold tabnum">5191961</span></div>
+            <div class="dt-row"><span class="dt-k">App ID</span><span class="dt-v tabnum">16103</span></div>
+            <div class="api-status-row">
+              <div class="api-dot" id="api-dot"></div>
+              <span class="dt-k" id="api-status-text">Verificando conexão…</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-config -->
+
+  </div><!-- /content -->
 </main>
 
+<!-- ════════════════════════════════════════
+     JAVASCRIPT (lógica inalterada)
+════════════════════════════════════════ -->
 <script>
+/* ── Custos & meta ── */
 const COSTS = {'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
 const orderMeta = JSON.parse(localStorage.getItem('ffh-order-meta') || '{}');
-
-// ── Estado global de filtros ──
 let currentStatusFilter = 'todos';
 let allOrders = [];
+let activePeriodPreset = '30';
 
 function saveMeta() { localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta)); }
 
-// ── Persistência e lógica do filtro de período ──
-let activePeriodPreset = '30'; // 'hoje' | '7' | '30' | '0' | 'custom'
-
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
+/* ── Período ── */
+function todayStr() { return new Date().toISOString().slice(0,10); }
 
 function setPreset(preset, btn) {
   activePeriodPreset = preset;
-  // Atualiza botões de preset
-  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-
+  document.querySelectorAll('.pill-btn').forEach(b => {
+    const p = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+    if (p) b.classList.toggle('active', p === preset);
+  });
   const now = new Date();
-  const toEl = document.getElementById('date-to');
   const fromEl = document.getElementById('date-from');
-
-  if (preset === 'hoje') {
-    fromEl.value = todayStr();
-    toEl.value = todayStr();
-  } else if (preset === '7') {
-    const d = new Date(now); d.setDate(d.getDate() - 7);
-    fromEl.value = d.toISOString().slice(0,10);
-    toEl.value = todayStr();
-  } else if (preset === '30') {
-    const d = new Date(now); d.setDate(d.getDate() - 30);
-    fromEl.value = d.toISOString().slice(0,10);
-    toEl.value = todayStr();
-  } else if (preset === '0') {
-    fromEl.value = '2020-01-01';
-    toEl.value = todayStr();
-  }
-  // 'custom': não mexe nos inputs, usuário já editou
-
-  savePeriod();
-  applyFilters();
-  updateMetrics(allOrders);
+  const toEl   = document.getElementById('date-to');
+  if (preset === 'hoje')   { fromEl.value = todayStr(); toEl.value = todayStr(); }
+  else if (preset === '7') { const d=new Date(now);d.setDate(d.getDate()-7); fromEl.value=d.toISOString().slice(0,10); toEl.value=todayStr(); }
+  else if (preset === '30'){ const d=new Date(now);d.setDate(d.getDate()-30);fromEl.value=d.toISOString().slice(0,10); toEl.value=todayStr(); }
+  else if (preset === '0') { fromEl.value='2020-01-01'; toEl.value=todayStr(); }
+  savePeriod(); applyFilters(); updateMetrics(allOrders);
 }
 
 function savePeriod() {
-  const fromEl = document.getElementById('date-from');
-  const toEl = document.getElementById('date-to');
   localStorage.setItem('ffh-period-preset', activePeriodPreset);
-  localStorage.setItem('ffh-period-from', fromEl?.value || '');
-  localStorage.setItem('ffh-period-to', toEl?.value || '');
+  localStorage.setItem('ffh-period-from', document.getElementById('date-from')?.value || '');
+  localStorage.setItem('ffh-period-to',   document.getElementById('date-to')?.value   || '');
 }
 
 function loadPeriod() {
@@ -338,27 +1197,21 @@ function loadPeriod() {
   const to     = localStorage.getItem('ffh-period-to')   || '';
   const fromEl = document.getElementById('date-from');
   const toEl   = document.getElementById('date-to');
-
   if (from && fromEl) fromEl.value = from;
-  if (to && toEl)     toEl.value   = to;
-
-  // Ativa o botão de preset correspondente
+  if (to   && toEl)   toEl.value   = to;
   activePeriodPreset = preset;
-  document.querySelectorAll('.preset-btn').forEach(b => {
+  document.querySelectorAll('.pill-btn').forEach(b => {
     const p = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
-    if (p === preset) b.classList.add('active');
-    else b.classList.remove('active');
+    if (p) b.classList.toggle('active', p === preset);
   });
-
-  // Se não havia valor salvo, inicializa com 30d
-  if (!from) setPreset('30', document.querySelector('.preset-btn.active'));
+  if (!from) setPreset('30', null);
 }
 
-// ── Histórico de ações ──
+/* ── Histórico ── */
 function pushHistory(orderId, msg) {
   orderMeta[orderId] = orderMeta[orderId] || {};
   orderMeta[orderId].history = orderMeta[orderId].history || [];
-  const ts = new Date().toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+  const ts = new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
   orderMeta[orderId].history.unshift({ ts, msg });
   saveMeta();
 }
@@ -369,9 +1222,10 @@ function renderHistory(id) {
   const items = hist.slice(0,6).map(h =>
     `<div class="history-item"><span class="history-dot"></span><span><b style="color:var(--text2)">${h.ts}</b> — ${h.msg}</span></div>`
   ).join('');
-  return `<div class="history-box"><div class="history-title">📋 Histórico</div>${items}</div>`;
+  return `<div class="history-box"><div class="history-title">Histórico</div>${items}</div>`;
 }
 
+/* ── Cálculo de lucro ── */
 function calcProfit(order) {
   const total = parseFloat(order.total);
   const method = (order.payment_details?.method || '').toLowerCase();
@@ -380,15 +1234,11 @@ function calcProfit(order) {
   const taxa = isPix ? value * 0.0099 : (value * 0.0369 + 0.35);
   const valorLiq = value - taxa;
   const product = order.products?.[0];
-  const name = (product?.name?.pt || product?.name?.['pt-BR'] || '').toLowerCase();
+  const name = (product?.name?.pt || product?.name?.['pt-BR'] || (typeof product?.name === 'string' ? product.name : '') || '').toLowerCase();
   const variant = (product?.variant_values?.[0] || '').toLowerCase();
   const isBoxy = name.includes('boxy') || name.includes('oversized');
   const isCostas = name.includes('costas') || variant.includes('costas');
-  let custo = 0;
-  if (isBoxy && isCostas) custo = 88.20;
-  else if (isBoxy) custo = 86.70;
-  else if (isCostas) custo = 48.20;
-  else custo = 46.70;
+  let custo = isBoxy && isCostas ? 88.20 : isBoxy ? 86.70 : isCostas ? 48.20 : 46.70;
   const lucro = valorLiq - custo;
   const margem = (lucro / total * 100).toFixed(1);
   return { lucro, margem, custo, isPix, taxa, isBoxy, isCostas };
@@ -400,47 +1250,33 @@ function fmtDate(iso) {
   return d.toLocaleDateString('pt-BR') + ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
 }
 
-// ── Nomes de coleção corretos ──
-// keys são buscados no nome do produto, SKU, categorias e tags
+/* ── Coleções ── */
 const COLLECTIONS = [
-  { keys: ['walking dead','twd','walkingdead'],           label: 'The Walking Dead',     id: 'twd'   },
-  { keys: ['supernatural','spn'],                        label: 'Supernatural',         id: 'spn'   },
-  { keys: ['the boys','theboys','boys'],                  label: 'The Boys',             id: 'boys'  },
-  { keys: ['vampire diaries','tvd','vampirediaries'],     label: 'The Vampire Diaries',  id: 'tvd'   },
-  { keys: ['invincible','invincivel'],                    label: 'Invincible',           id: 'inv'   },
-  // Marty Supreme: produto pode ter nome genérico — buscamos também no SKU e categorias
-  { keys: ['marty supreme','marty','martysupreme','ms-','ms_'], label: 'Marty Supreme', id: 'marty' },
+  { keys:['walking dead','twd','walkingdead'],         label:'The Walking Dead',    id:'twd'   },
+  { keys:['supernatural','spn'],                      label:'Supernatural',        id:'spn'   },
+  { keys:['the boys','theboys','boys'],                label:'The Boys',            id:'boys'  },
+  { keys:['vampire diaries','tvd','vampirediaries'],  label:'The Vampire Diaries', id:'tvd'   },
+  { keys:['invincible','invincivel'],                  label:'Invincible',          id:'inv'   },
+  { keys:['marty supreme','marty','martysupreme','ms-','ms_'], label:'Marty Supreme', id:'marty' },
 ];
 
 function getCollection(order) {
   let sources = [];
-  if (typeof order === 'string') {
-    sources = [order];
-  } else {
-    const p = order?.products?.[0];
-    if (!p) return null;
-    // Na API de pedidos da Nuvemshop, p.name pode ser string OU objeto multilíngue
+  if (typeof order === 'string') { sources = [order]; }
+  else {
+    const p = order?.products?.[0]; if (!p) return null;
     const nameRaw = p?.name;
-    const nameStr = typeof nameRaw === 'string'
-      ? nameRaw
-      : (nameRaw?.pt || nameRaw?.['pt-BR'] || nameRaw?.en || '');
-    sources = [
-      nameStr,
-      p?.sku,
-      p?.barcode,
-      ...(p?.categories || []).map(c => {
-        const cn = c?.name;
-        return typeof cn === 'string' ? cn : (cn?.pt || cn?.['pt-BR'] || cn?.en || '');
-      }),
-      ...(p?.tags ? (typeof p.tags === 'string' ? p.tags.split(',') : p.tags) : []),
-      ...(p?.variant_values || []),
+    const nameStr = typeof nameRaw === 'string' ? nameRaw : (nameRaw?.pt || nameRaw?.['pt-BR'] || nameRaw?.en || '');
+    sources = [nameStr, p?.sku, p?.barcode,
+      ...(p?.categories||[]).map(c=>{ const cn=c?.name; return typeof cn==='string'?cn:(cn?.pt||cn?.['pt-BR']||cn?.en||''); }),
+      ...(p?.tags ? (typeof p.tags==='string' ? p.tags.split(',') : p.tags) : []),
+      ...(p?.variant_values||[])
     ].filter(Boolean);
   }
   const haystack = sources.join(' ').toLowerCase();
   return COLLECTIONS.find(c => c.keys.some(k => haystack.includes(k))) || null;
 }
 
-// Helper: lê nome do produto como string (suporta string direta ou objeto multilíngue)
 function getProductName(product) {
   if (!product) return '';
   const n = product.name;
@@ -448,21 +1284,7 @@ function getProductName(product) {
   return typeof n === 'string' ? n : (n.pt || n['pt-BR'] || n.en || '');
 }
 
-function getPaymentBadge(order) {
-  const m = (order.payment_details?.method || '').toLowerCase();
-  if (m.includes('pix')) return '<span class="badge bg-green">● Pix</span>';
-  if (m.includes('credit') || m.includes('cartao') || m.includes('crédito')) return '<span class="badge bg-gold">● Cartão</span>';
-  return '<span class="badge bg-blue">● ' + (order.payment_details?.method || 'Outro') + '</span>';
-}
-
-function getPaymentStatus(order) {
-  const s = order.payment_status;
-  if (s === 'paid') return '<span class="badge bg-green">● Pago</span>';
-  if (s === 'pending') return '<span class="badge bg-yellow">● Aguardando</span>';
-  return '<span class="badge bg-red">● ' + s + '</span>';
-}
-
-// ── Status sem "Entregue" — agora usa tracking da Nuvemshop pra "Enviado" ──
+/* ── Status & badges ── */
 function getOrderStatus(order, meta) {
   const trackingCode = order.tracking_number || order.tracking_code
     || order.shipping_tracking_number
@@ -472,54 +1294,51 @@ function getOrderStatus(order, meta) {
   return 'pendente';
 }
 
-function getStatusBadge(status) {
-  if (status === 'enviado') return '<span class="badge bg-blue">● Enviado</span>';
-  if (status === 'producao') return '<span class="badge bg-gold">● Em produção</span>';
-  return '<span class="badge bg-yellow">● Pendente</span>';
+function statusPill(status) {
+  if (status === 'enviado')  return '<span class="status-pill sp-shipped"><span class="status-pill-dot"></span>Enviado</span>';
+  if (status === 'producao') return '<span class="status-pill sp-production"><span class="status-pill-dot"></span>Em produção</span>';
+  return '<span class="status-pill sp-pending"><span class="status-pill-dot"></span>Pendente</span>';
+}
+
+function paymentPill(order) {
+  const m = (order.payment_details?.method || '').toLowerCase();
+  if (m.includes('pix')) return '<span class="status-pill sp-pix"><span class="status-pill-dot"></span>Pix</span>';
+  if (m.includes('credit') || m.includes('cartao') || m.includes('crédito')) return '<span class="status-pill sp-card"><span class="status-pill-dot"></span>Cartão</span>';
+  return '<span class="status-pill sp-blue"><span class="status-pill-dot"></span>' + (order.payment_details?.method || 'Outro') + '</span>';
+}
+
+function paymentStatusPill(order) {
+  if (order.payment_status === 'paid')    return '<span class="status-pill sp-paid"><span class="status-pill-dot"></span>Pago</span>';
+  if (order.payment_status === 'pending') return '<span class="status-pill sp-waiting"><span class="status-pill-dot"></span>Aguardando</span>';
+  return '<span class="status-pill sp-blue"><span class="status-pill-dot"></span>' + (order.payment_status||'—') + '</span>';
 }
 
 function checkmark() {
-  return '<svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 6l3 3 5-5" stroke="#0d0d0d" stroke-width="1.8"/></svg>';
+  return `<svg viewBox="0 0 12 12" fill="none" width="9" height="9"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2"/></svg>`;
 }
 
-function calcBusinessDays(startIso, endDate) {
-  let d = new Date(startIso);
-  const end = endDate || new Date();
-  let util = 0;
-  while (d < end) {
-    if (d.getDay() !== 0 && d.getDay() !== 6) util++;
-    d.setDate(d.getDate() + 1);
-  }
+function calcBusinessDays(startIso) {
+  let d = new Date(startIso); const end = new Date(); let util = 0;
+  while (d < end) { if (d.getDay()!==0 && d.getDay()!==6) util++; d.setDate(d.getDate()+1); }
   return util;
 }
 
-// ── Prazo de entrega estimado da Nuvemshop ──
-function getShippingDeadline(order) {
-  // Tenta campos comuns da Nuvemshop para prazo estimado
-  const raw = order.shipping_min_days || order.shipping_max_days
-    || order.shipping_estimated_days
-    || order.shipping_option_details?.min_delivery_days
-    || order.shipping_option_details?.max_delivery_days
-    || null;
-  return raw;
-}
-
+/* ── Render order card ── */
 function renderOrder(order) {
-  const id = order.number;
+  const id   = order.number;
   const meta = orderMeta[id] || {};
-  const fin = calcProfit(order);
+  const fin  = calcProfit(order);
   const status = getOrderStatus(order, meta);
 
   const customer = order.customer;
-  const name = customer ? (customer.name || (customer.first_name || '') + ' ' + (customer.last_name || '')).trim() : 'Cliente';
-  const city = order.shipping_address?.city || '';
+  const name = customer ? (customer.name || ((customer.first_name||'') + ' ' + (customer.last_name||'')).trim()) : 'Cliente';
+  const city  = order.shipping_address?.city     || '';
   const state = order.shipping_address?.province || '';
 
   const product = order.products?.[0];
-  const rawProductName = getProductName(product);
   const coll = getCollection(order);
-  const collectionLabel = coll ? coll.label : (rawProductName || 'Produto');
-  const variant = product?.variant_values?.join(' · ') || '';
+  const collLabel = coll ? coll.label : (getProductName(product) || 'Produto');
+  const variant   = product?.variant_values?.join(' · ') || '';
   const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
 
   const trackingCode = order.tracking_number || order.tracking_code
@@ -528,201 +1347,195 @@ function renderOrder(order) {
   const trackingUrl = trackingCode ? 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode : '';
 
   const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
-  const shippingCost = parseFloat(order.shipping_cost_customer || 0);
+  const shippingCost   = parseFloat(order.shipping_cost_customer || 0);
 
-  const orderDate = order.created_at;
-  const diasUtil = calcBusinessDays(orderDate);
-  const pct = Math.min(Math.round((diasUtil / 8) * 100), 100);
-  const prazoColor = diasUtil >= 8 ? 'var(--red)' : diasUtil >= 6 ? 'var(--yellow)' : 'var(--green)';
+  const diasUtil = calcBusinessDays(order.created_at);
+  const pct = Math.min(Math.round((diasUtil/8)*100),100);
+  const prazoColor = diasUtil>=8 ? 'var(--coral)' : diasUtil>=6 ? 'var(--amber)' : 'var(--mint)';
 
-  // Indicador de atraso: pago há 3+ dias úteis sem código Hotprinti
   const isAtrasado = !meta.hotCode && order.payment_status === 'paid' && diasUtil >= 3;
 
-  // Prazo estimado de entrega — Nuvemshop guarda no objeto shipping_option (não no pedido diretamente)
-  // Tenta todos os campos conhecidos onde pode aparecer
-  const estMin = order.shipping_min_days
-    ?? order.shipping_option_reference?.shipping_min_days
-    ?? order.shipping_cost_owner_min_days
-    ?? null;
-  const estMax = order.shipping_max_days
-    ?? order.shipping_option_reference?.shipping_max_days
-    ?? order.shipping_cost_owner_max_days
-    ?? null;
-  // Tenta também extrair do nome do método (ex: "SEDEX - 6 a 7 dias úteis")
-  let prazoEntregaHtml = '';
-  if (estMin !== null || estMax !== null) {
-    const txt = (estMin !== null && estMax !== null)
-      ? `${estMin}–${estMax} dias úteis`
-      : `${estMin ?? estMax} dias úteis`;
-    prazoEntregaHtml = `<div class="dt-row"><span class="dt-k">Prazo estimado entrega</span><span class="dt-v gold">${txt}</span></div>`;
+  // Prazo estimado de entrega
+  const estMin = order.shipping_min_days ?? order.shipping_option_reference?.shipping_min_days ?? null;
+  const estMax = order.shipping_max_days ?? order.shipping_option_reference?.shipping_max_days ?? null;
+  let prazoEntregaRow = '';
+  if (estMin!==null || estMax!==null) {
+    const txt = (estMin!==null && estMax!==null) ? `${estMin}–${estMax} dias úteis` : `${estMin??estMax} dias úteis`;
+    prazoEntregaRow = `<div class="dt-row"><span class="dt-k">Prazo estimado</span><span class="dt-v gold">${txt}</span></div>`;
   } else {
-    // Tenta extrair do nome do método de envio (ex: "Melhor Envio - Correios SEDEX - 6 a 7 dias")
-    const methodMatch = shippingMethod.match(/(\d+)\s*(?:a|–|-)\s*(\d+)\s*dias/i)
-      || shippingMethod.match(/(\d+)\s*dias/i);
-    if (methodMatch) {
-      const txt = methodMatch[2]
-        ? `${methodMatch[1]}–${methodMatch[2]} dias úteis`
-        : `${methodMatch[1]} dias úteis`;
-      prazoEntregaHtml = `<div class="dt-row"><span class="dt-k">Prazo estimado entrega</span><span class="dt-v gold">${txt}</span></div>`;
+    const mm = shippingMethod.match(/(\d+)\s*(?:a|–|-)\s*(\d+)\s*dias/i) || shippingMethod.match(/(\d+)\s*dias/i);
+    if (mm) {
+      const txt = mm[2] ? `${mm[1]}–${mm[2]} dias úteis` : `${mm[1]} dias úteis`;
+      prazoEntregaRow = `<div class="dt-row"><span class="dt-k">Prazo estimado</span><span class="dt-v gold">${txt}</span></div>`;
     }
   }
 
-  // Alerta prazo Hotprinti esgotado
-  const alertPrazo = diasUtil >= 8 && status === 'producao'
-    ? '<div class="alert-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Prazo esgotado — entre em contato com a Hotprinti</div>'
-    : '';
+  // Alertas
+  const alertPrazo = (diasUtil>=8 && status==='producao')
+    ? `<div class="alert alert-err"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Prazo esgotado — entre em contato com a Hotprinti</div>` : '';
 
-  // Alerta criar pedido na Hotprinti (pago, sem código, 0+ dias)
-  const alertHot = !meta.hotCode && order.payment_status === 'paid'
-    ? `<div class="alert-hot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Criar pedido na Hotprinti${isAtrasado ? ' — <b>'+diasUtil+' dias úteis sem código!</b>' : ''}</div>`
-    : '';
+  const alertHot = (!meta.hotCode && order.payment_status==='paid')
+    ? `<div class="alert alert-warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Criar pedido na Hotprinti${isAtrasado ? ` — <b>${diasUtil} dias úteis sem código!</b>` : ''}</div>` : '';
 
-  // Hotprinti box: com botão copiar se já tem código
+  // Hotprinti box
   let hotBox = '';
   if (meta.hotCode) {
-    hotBox = `
-      <div class="hot-box">
-        <div class="hot-box-label">⭐ Código Hotprinti</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="font-size:15px;font-weight:700;color:var(--gold)">${meta.hotCode}</div>
-          <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${meta.hotCode}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Copiar
-          </button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>
-      </div>`;
+    hotBox = `<div class="hot-box">
+      <div class="hot-box-label">⭐ Código Hotprinti</div>
+      <div class="hot-code-wrap">
+        <div class="hot-code-val">${meta.hotCode}</div>
+        <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${meta.hotCode}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar
+        </button>
+      </div>
+      <div class="hot-hint">Use para suporte com o fornecedor</div>
+    </div>`;
   } else {
-    hotBox = `
-      <div class="hot-box" id="hotbox-${id}">
-        <div class="hot-box-label">⭐ Código Hotprinti</div>
-        <div class="form-row" style="margin-top:0">
-          <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456" style="margin-top:0">
-          <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>
-      </div>`;
+    hotBox = `<div class="hot-box" id="hotbox-${id}">
+      <div class="hot-box-label">⭐ Código Hotprinti</div>
+      <div class="form-row">
+        <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456">
+        <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
+      </div>
+      <div class="hot-hint" style="margin-top:6px">Insira após criar o pedido na Hotprinti</div>
+    </div>`;
   }
 
-  const enviadoStep = status === 'enviado'
-    ? `Pedido enviado — ${calcBusinessDays(orderDate)} dias úteis`
-    : 'Pedido enviado';
+  // Steps
+  const steps = [
+    { done: true,              label: 'Pedido recebido' },
+    { done: !!meta.hotCode,    label: meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti' },
+    { done: !!trackingCode,    label: trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio' },
+    { done: status==='enviado',label: status==='enviado' ? `Pedido enviado — ${diasUtil} dias úteis` : 'Pedido enviado' },
+  ];
+
+  const stepsHtml = steps.map(s => `
+    <div class="step-item${s.done ? ' done' : ''}">
+      <div class="step-circle${s.done ? ' done' : ''}">${s.done ? checkmark() : ''}</div>
+      <div class="step-text">${s.label}</div>
+    </div>`).join('');
 
   return `
 <div class="order-card${isAtrasado ? ' atrasado' : ''}" data-status="${status}" data-num="${order.number}" data-name="${name.toLowerCase()}" id="oc-${id}">
+
   <div class="order-header" onclick="toggleOrder('od-${id}','cb-${id}')">
     <div>
-      <div class="o-num">#${order.number}${isAtrasado ? ' <span style="font-size:10px;color:var(--orange)">⚠</span>' : ''}</div>
-      <div class="o-num-sub">${fmtDate(order.created_at)}</div>
+      <div class="o-num">#${order.number}${isAtrasado ? ' <span style="font-size:10px;color:var(--coral)">⚠</span>' : ''}</div>
+      <div class="o-date">${fmtDate(order.created_at)}</div>
     </div>
-    <div><div class="o-name">${name}</div><div class="o-name-sub">${city}${state ? ', ' + state : ''}</div></div>
     <div>
-      <div style="font-size:12px;font-weight:600;color:var(--text)">${collectionLabel}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:2px">${typeLabel}${variant ? ' · ' + variant : ''}</div>
+      <div class="o-customer">${name}</div>
+      <div class="o-location">${city}${state ? ', '+state : ''}</div>
     </div>
-    <div>${getPaymentStatus(order)}</div>
-    <div>${getStatusBadge(status)}</div>
-    <div><div class="o-price">${fmtBRL(parseFloat(order.total))}</div><div class="o-profit">+ ${fmtBRL(fin.lucro)} lucro</div></div>
+    <div>
+      <div class="o-collection">${collLabel}</div>
+      <div class="o-type">${typeLabel}${variant ? ' · '+variant : ''}</div>
+    </div>
+    <div>${paymentStatusPill(order)}</div>
+    <div>${statusPill(status)}</div>
+    <div>
+      <div class="o-value">${fmtBRL(parseFloat(order.total))}</div>
+      <div class="o-profit">+${fmtBRL(fin.lucro)}</div>
+    </div>
     <button class="expand-btn" id="cb-${id}">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
   </div>
 
   <div class="order-detail" id="od-${id}">
+    <div class="detail-inner">
 
-    <div>
-      <div class="product-box">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">📦 Produto</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text)">${collectionLabel}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px">${typeLabel}</div>
-        ${variant ? '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + variant + '</div>' : ''}
-      </div>
-      <div class="dt-title">👤 Cliente & entrega</div>
-      <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
-      <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address || '—') + (order.shipping_address?.number ? ', ' + order.shipping_address.number : '') + (order.shipping_address?.floor ? ' ' + order.shipping_address.floor : '')}</span></div>
-      <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state ? ', ' + state : ''}</span></div>
-      <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">${order.shipping_address?.zipcode || '—'}</span></div>
-      <div class="dt-row"><span class="dt-k">Frete escolhido</span><span class="dt-v">${shippingMethod}</span></div>
-      <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
-      ${prazoEntregaHtml}
-      <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${getPaymentBadge(order)}</span></div>
-    </div>
-
-    <div>
-      <div class="dt-title">💰 Financeiro</div>
-      <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v">${fmtBRL(parseFloat(order.total))}</span></div>
-      ${fin.isPix ? '<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v red">− ' + fmtBRL(parseFloat(order.total) * 0.05) + '</span></div>' : ''}
-      <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v red">− ${fmtBRL(fin.taxa)}</span></div>
-      <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v red">− ${fmtBRL(fin.custo)}</span></div>
-      <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">${typeLabel}</span></div>
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border2)">
-        <div class="dt-row"><span class="dt-k" style="font-weight:600;color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v green" style="font-size:16px;font-weight:700">${fmtBRL(fin.lucro)}</span></div>
-        <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v green">${fin.margem}%</span></div>
-      </div>
-    </div>
-
-    <div>
-      ${alertHot}
-      ${alertPrazo}
-
-      ${hotBox}
-
-      <div class="steps" style="margin-bottom:14px">
-        <div class="step done"><div class="step-circle done">${checkmark()}</div>Pedido recebido</div>
-        <div class="step${meta.hotCode ? ' done' : ''}">
-          <div class="step-circle${meta.hotCode ? ' done' : ''}">${meta.hotCode ? checkmark() : ''}</div>
-          <span>${meta.hotCode ? 'Criado na Hotprinti' : 'Criar na Hotprinti'}</span>
+      <!-- COL 1: Produto + Cliente -->
+      <div class="detail-col">
+        <div class="product-box">
+          <div class="product-box-label">📦 Produto</div>
+          <div class="product-box-name">${collLabel}</div>
+          <div class="product-box-sub">${typeLabel}${variant ? ' · '+variant : ''}</div>
         </div>
-        <div class="step${trackingCode ? ' done' : ''}">
-          <div class="step-circle${trackingCode ? ' done' : ''}">${trackingCode ? checkmark() : ''}</div>
-          <span>${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
-        </div>
-        <div class="step${status === 'enviado' ? ' done' : ''}">
-          <div class="step-circle${status === 'enviado' ? ' done' : ''}">${status === 'enviado' ? checkmark() : ''}</div>
-          <span>${enviadoStep}</span>
+        <div class="dt-heading"><span class="dt-heading-icon">👤</span> Cliente &amp; entrega</div>
+        <div class="dt-table">
+          <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
+          <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email || '—'}</span></div>
+          <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone || '—'}</span></div>
+          <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address||'—') + (order.shipping_address?.number ? ', '+order.shipping_address.number : '') + (order.shipping_address?.floor ? ' '+order.shipping_address.floor : '')}</span></div>
+          <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state ? ', '+state : ''}</span></div>
+          <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum">${order.shipping_address?.zipcode || '—'}</span></div>
+          <div class="dt-row"><span class="dt-k">Frete</span><span class="dt-v">${shippingMethod}</span></div>
+          <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
+          ${prazoEntregaRow}
+          <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${paymentPill(order)}</span></div>
         </div>
       </div>
 
-      <div style="margin-bottom:14px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">⏱ Prazo Hotprinti (8 dias úteis)</div>
+      <!-- COL 2: Financeiro -->
+      <div class="detail-col">
+        <div class="dt-heading"><span class="dt-heading-icon">💰</span> Financeiro</div>
+        <div class="dt-table">
+          <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v tabnum">${fmtBRL(parseFloat(order.total))}</span></div>
+          ${fin.isPix ? `<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v coral tabnum">− ${fmtBRL(parseFloat(order.total)*0.05)}</span></div>` : ''}
+          <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v coral tabnum">− ${fmtBRL(fin.taxa)}</span></div>
+          <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v coral tabnum">− ${fmtBRL(fin.custo)}</span></div>
+          <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">${typeLabel}</span></div>
+        </div>
+        <div class="fin-total">
+          <div class="dt-row"><span class="dt-k fw-700" style="color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v mint big">+ ${fmtBRL(fin.lucro)}</span></div>
+          <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v mint">${fin.margem}%</span></div>
+        </div>
+      </div>
+
+      <!-- COL 3: Ações + Rastreio + Obs -->
+      <div class="detail-col">
+        ${alertHot}
+        ${alertPrazo}
+        ${hotBox}
+
+        <div class="steps-track">${stepsHtml}</div>
+
         <div class="prazo-wrap">
-          <div class="prazo-bg"><div class="prazo-fill" style="width:${pct}%;background:${prazoColor}"></div></div>
-          <div class="prazo-info"><span>${diasUtil} / 8 dias úteis (desde o pedido)</span><span>8 dias úteis</span></div>
+          <div class="prazo-label">⏱ Prazo Hotprinti — 8 dias úteis</div>
+          <div class="prazo-bar-bg">
+            <div class="prazo-bar-fill" style="width:${pct}%;background:${prazoColor}"></div>
+          </div>
+          <div class="prazo-meta">
+            <span>${diasUtil} / 8 dias úteis desde o pedido</span>
+            <span>${pct}%</span>
+          </div>
         </div>
+
+        <div class="tracking-wrap">
+          <div class="tracking-label">🚚 Rastreio Correios</div>
+          ${trackingCode
+            ? `<a class="tracking-link" href="${trackingUrl}" target="_blank">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                ${trackingCode}</a>`
+            : `<div class="tracking-empty">Aguardando — atualizado automaticamente pela Nuvemshop</div>`
+          }
+        </div>
+
+        <div>
+          <div class="obs-label">📝 Observações</div>
+          <textarea class="obs-area" id="obs-${id}" onblur="saveObs('${id}')" placeholder="Anotações sobre este pedido…">${meta.obs || ''}</textarea>
+        </div>
+
+        ${renderHistory(id)}
       </div>
 
-      <div style="margin-bottom:10px">
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">🚚 Rastreio Correios</div>
-        ${trackingCode
-          ? '<a class="tracking-link" href="' + trackingUrl + '" target="_blank"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' + trackingCode + '</a>'
-          : '<div style="font-size:11px;color:var(--text3)">Aguardando — será atualizado automaticamente pela Nuvemshop</div>'
-        }
-      </div>
-
-      <div>
-        <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">📝 Observações</div>
-        <textarea class="obs-area" id="obs-${id}" onblur="saveObs('${id}')" placeholder="Anotações sobre este pedido...">${meta.obs || ''}</textarea>
-      </div>
-
-      ${renderHistory(id)}
     </div>
-
   </div>
 </div>`;
 }
 
-// ── Copiar código Hotprinti ──
+/* ── Interações ── */
 function copyCode(id, code) {
   navigator.clipboard.writeText(code).then(() => {
     const btn = document.getElementById('copy-' + id);
     if (!btn) return;
     btn.classList.add('copied');
-    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg> Copiado!';
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><polyline points="20 6 9 17 4 12"/></svg> Copiado!`;
     setTimeout(() => {
       btn.classList.remove('copied');
-      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar`;
     }, 2000);
   });
 }
@@ -736,34 +1549,30 @@ function saveHotprinti(id) {
   orderMeta[id].hotCode = code;
   pushHistory(id, `Código Hotprinti salvo: ${code}`);
   saveMeta();
-  // Substitui o box sem reload completo
   const hotBox = document.getElementById('hotbox-' + id);
   if (hotBox) {
-    hotBox.outerHTML = `
-      <div class="hot-box">
-        <div class="hot-box-label">⭐ Código Hotprinti</div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <div style="font-size:15px;font-weight:700;color:var(--gold)">${code}</div>
-          <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${code}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Copiar
-          </button>
-        </div>
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>
-      </div>`;
-    // Atualiza alerta e step inline
+    hotBox.outerHTML = `<div class="hot-box">
+      <div class="hot-box-label">⭐ Código Hotprinti</div>
+      <div class="hot-code-wrap">
+        <div class="hot-code-val">${code}</div>
+        <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${code}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar
+        </button>
+      </div>
+      <div class="hot-hint">Use para suporte com o fornecedor</div>
+    </div>`;
     const card = document.getElementById('oc-' + id);
     if (card) {
       card.classList.remove('atrasado');
-      // Atualiza badge de status
+      card.dataset.status = 'producao';
       const statusCel = card.querySelector('.order-header > div:nth-child(5)');
-      if (statusCel) statusCel.innerHTML = getStatusBadge('producao');
+      if (statusCel) statusCel.innerHTML = statusPill('producao');
     }
-    // Adiciona histórico no DOM
-    const detailCol3 = document.querySelector(`#od-${id} > div:last-child`);
+    const detailCol3 = document.querySelector(`#od-${id} .detail-inner > div:last-child`);
     if (detailCol3) {
-      const existing = detailCol3.querySelector('.history-box');
-      if (existing) existing.outerHTML = renderHistory(id);
+      const ex = detailCol3.querySelector('.history-box');
+      if (ex) ex.outerHTML = renderHistory(id);
       else detailCol3.insertAdjacentHTML('beforeend', renderHistory(id));
     }
   }
@@ -772,17 +1581,16 @@ function saveHotprinti(id) {
 function saveObs(id) {
   const obs = document.getElementById('obs-' + id)?.value || '';
   const prev = orderMeta[id]?.obs || '';
-  if (obs === prev) return; // Sem mudança, não registra
+  if (obs === prev) return;
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].obs = obs;
   const preview = obs.length > 30 ? obs.slice(0,30) + '…' : obs;
   pushHistory(id, `Observação salva: "${preview}"`);
   saveMeta();
-  // Atualiza histórico no DOM
-  const detailCol3 = document.querySelector(`#od-${id} > div:last-child`);
+  const detailCol3 = document.querySelector(`#od-${id} .detail-inner > div:last-child`);
   if (detailCol3) {
-    const existing = detailCol3.querySelector('.history-box');
-    if (existing) existing.outerHTML = renderHistory(id);
+    const ex = detailCol3.querySelector('.history-box');
+    if (ex) ex.outerHTML = renderHistory(id);
     else detailCol3.insertAdjacentHTML('beforeend', renderHistory(id));
   }
 }
@@ -791,147 +1599,141 @@ function toggleOrder(detailId, btnId) {
   const d = document.getElementById(detailId);
   const b = document.getElementById(btnId);
   const open = d.classList.toggle('open');
-  b.style.transform = open ? 'rotate(180deg)' : '';
+  b.querySelector('svg').style.transform = open ? 'rotate(180deg)' : '';
 }
 
-// ── Filtros combinados: status + período por data + busca ──
+/* ── Filtros ── */
 function setStatusFilter(status, btn) {
   currentStatusFilter = status;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  applyFilters();
-  updateMetrics(allOrders);
+  // só atualiza pills do grupo de status (não os de período)
+  const statusGroup = btn?.closest('.toolbar-group');
+  if (statusGroup) {
+    statusGroup.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  applyFilters(); updateMetrics(allOrders);
 }
 
 function applyFilters() {
-  const query   = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-  const fromVal = document.getElementById('date-from')?.value || '';
-  const toVal   = document.getElementById('date-to')?.value   || '';
+  const query    = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const fromVal  = document.getElementById('date-from')?.value || '';
+  const toVal    = document.getElementById('date-to')?.value   || '';
   const fromDate = fromVal ? new Date(fromVal + 'T00:00:00') : null;
   const toDate   = toVal   ? new Date(toVal   + 'T23:59:59') : null;
-
   document.querySelectorAll('.order-card').forEach(card => {
-    const cardStatus = card.dataset.status;
-    const cardNum    = card.dataset.num  || '';
-    const cardName   = card.dataset.name || '';
-
-    const statusOk = currentStatusFilter === 'todos' || cardStatus === currentStatusFilter;
-    const searchOk = !query || cardNum.includes(query.replace('#','')) || cardName.includes(query);
-
+    const statusOk = currentStatusFilter === 'todos' || card.dataset.status === currentStatusFilter;
+    const searchOk = !query || (card.dataset.num||'').includes(query.replace('#','')) || (card.dataset.name||'').includes(query);
     let periodOk = true;
-    const orderId = card.id.replace('oc-','');
-    const order = allOrders.find(o => String(o.number) === String(orderId));
+    const order = allOrders.find(o => String(o.number) === String(card.id.replace('oc-','')));
     if (order) {
       const d = new Date(order.created_at);
       if (fromDate && d < fromDate) periodOk = false;
       if (toDate   && d > toDate)   periodOk = false;
     }
-
     card.style.display = (statusOk && searchOk && periodOk) ? '' : 'none';
   });
 }
 
+/* ── Navegação ── */
 function showTab(tab, el) {
   ['monitor','stats','config'].forEach(t => {
-    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
   });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
-  const titles = {monitor:'Monitoramento de pedidos',stats:'Estatísticas',config:'Custos & Configurações'};
+  const titles = { monitor:'Monitoramento de pedidos', stats:'Estatísticas', config:'Custos & Configurações' };
   document.getElementById('page-title').textContent = titles[tab];
 }
 
+/* ── Métricas ── */
 function updateMetrics(orders) {
-  const now      = new Date();
-  const hoje     = now.toDateString();
+  const now = new Date();
+  const hoje = now.toDateString();
   const fromVal  = document.getElementById('date-from')?.value || '';
   const toVal    = document.getElementById('date-to')?.value   || '';
-  const fromDate = fromVal ? new Date(fromVal + 'T00:00:00') : null;
-  const toDate   = toVal   ? new Date(toVal   + 'T23:59:59') : null;
+  const fromDate = fromVal ? new Date(fromVal+'T00:00:00') : null;
+  const toDate   = toVal   ? new Date(toVal  +'T23:59:59') : null;
 
-  // Pedidos no período ativo do filtro de data
   const periodOrders = orders.filter(o => {
     const d = new Date(o.created_at);
     if (fromDate && d < fromDate) return false;
     if (toDate   && d > toDate)   return false;
     return true;
   });
-
-  // Pedidos no período E no filtro de status ativo
-  const filteredOrders = currentStatusFilter === 'todos'
+  const filteredOrders = currentStatusFilter==='todos'
     ? periodOrders
-    : periodOrders.filter(o => {
-        const meta = orderMeta[o.number] || {};
-        return getOrderStatus(o, meta) === currentStatusFilter;
-      });
+    : periodOrders.filter(o => getOrderStatus(o, orderMeta[o.number]||{}) === currentStatusFilter);
 
-  const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
-  const fat       = filteredOrders.reduce((s, o) => s + parseFloat(o.total), 0);
-  const lucroTotal= filteredOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
-  const pendentes = periodOrders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
-  const ticket    = filteredOrders.length ? fat / filteredOrders.length : 0;
-  const margem    = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
+  const hojeCount  = orders.filter(o => new Date(o.created_at).toDateString()===hoje).length;
+  const fat        = filteredOrders.reduce((s,o)=>s+parseFloat(o.total),0);
+  const lucroTotal = filteredOrders.reduce((s,o)=>s+calcProfit(o).lucro,0);
+  const pendentes  = periodOrders.filter(o=>!orderMeta[o.number]?.hotCode && o.payment_status==='paid').length;
+  const ticket     = filteredOrders.length ? fat/filteredOrders.length : 0;
+  const margem     = fat>0 ? (lucroTotal/fat*100).toFixed(1) : 0;
 
-  // Label dinâmico do período
   let periodoLabel = '';
-  if (fromVal && toVal && fromVal === toVal) periodoLabel = 'hoje';
-  else if (fromVal && toVal) periodoLabel = `${fromVal.split('-').reverse().join('/')} – ${toVal.split('-').reverse().join('/')}`;
-  else periodoLabel = 'período selecionado';
+  if (fromVal && toVal && fromVal===toVal) periodoLabel='hoje';
+  else if (fromVal && toVal) periodoLabel=`${fromVal.split('-').reverse().join('/')} – ${toVal.split('-').reverse().join('/')}`;
+  else periodoLabel='período selecionado';
 
-  document.getElementById('m-hoje').textContent   = hojeCount;
-  document.getElementById('m-fat').textContent    = fmtBRL(fat);
-  document.getElementById('m-fat-sub').textContent= periodoLabel;
-  document.getElementById('m-lucro').textContent  = fmtBRL(lucroTotal);
+  document.getElementById('m-hoje').textContent      = hojeCount;
+  document.getElementById('m-fat').textContent       = fmtBRL(fat);
+  document.getElementById('m-fat-sub').textContent   = periodoLabel;
+  document.getElementById('m-lucro').textContent     = fmtBRL(lucroTotal);
   document.getElementById('m-lucro-sub').textContent = 'margem ' + margem + '%';
   document.getElementById('m-pendentes').textContent = pendentes;
-  document.getElementById('m-ticket').textContent = fmtBRL(ticket);
+  document.getElementById('m-ticket').textContent    = fmtBRL(ticket);
 
   const colCounts = {twd:0,spn:0,boys:0,tvd:0,inv:0,marty:0};
-  filteredOrders.forEach(o => {
-    const col = getCollection(o);
-    if (col) colCounts[col.id]++;
-  });
-  Object.keys(colCounts).forEach(k => {
-    const el = document.getElementById('c-' + k);
-    if (el) el.textContent = colCounts[k];
-  });
+  filteredOrders.forEach(o => { const col=getCollection(o); if(col) colCounts[col.id]++; });
+  Object.keys(colCounts).forEach(k => { const el=document.getElementById('c-'+k); if(el) el.textContent=colCounts[k]; });
 }
 
+/* ── Load ── */
 async function loadOrders() {
-  const btn = document.getElementById('sync-btn');
+  const btn      = document.getElementById('sync-btn');
   const statusEl = document.getElementById('sync-status');
   btn.classList.add('spinning');
-  statusEl.textContent = 'Sincronizando...';
+  statusEl.textContent = 'Sincronizando…';
   try {
     const res = await fetch('/api/orders?per_page=50');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const orders = await res.json();
     if (!Array.isArray(orders)) throw new Error('Resposta inválida');
     allOrders = orders;
-    document.getElementById('api-status').className = 'badge bg-green';
-    document.getElementById('api-status').textContent = '● Conectado';
+
+    // API status
+    const dot  = document.getElementById('api-dot');
+    const txt  = document.getElementById('api-status-text');
+    if (dot) { dot.style.background='var(--mint)'; dot.style.boxShadow='0 0 8px var(--mint-dim)'; }
+    if (txt)   txt.textContent = '● Conectado';
+
     updateMetrics(orders);
+
     const list = document.getElementById('orders-list');
     if (orders.length === 0) {
-      list.innerHTML = '<div class="empty">Nenhum pedido encontrado</div>';
+      list.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Nenhum pedido encontrado</div>';
     } else {
       list.innerHTML = orders.map(o => renderOrder(o)).join('');
     }
-    applyFilters();
-    updateMetrics(allOrders);
+    applyFilters(); updateMetrics(allOrders);
+
     const now = new Date();
-    statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
-  } catch (err) {
+    statusEl.textContent = 'Sync ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
+  } catch(err) {
     statusEl.textContent = 'Erro: ' + err.message;
-    document.getElementById('api-status').className = 'badge bg-red';
-    document.getElementById('api-status').textContent = '● Erro';
-    document.getElementById('orders-list').innerHTML = '<div class="empty">Erro ao carregar pedidos.<br><small>' + err.message + '</small></div>';
+    const dot = document.getElementById('api-dot');
+    const txt = document.getElementById('api-status-text');
+    if (dot) { dot.style.background='var(--coral)'; dot.style.boxShadow='0 0 8px var(--coral-bg)'; }
+    if (txt)   txt.textContent = '● Erro de conexão';
+    document.getElementById('orders-list').innerHTML =
+      `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Erro ao carregar pedidos: ${err.message}</div>`;
   } finally {
     btn.classList.remove('spinning');
   }
 }
 
-// ── Init ──
+/* ── Init ── */
 loadPeriod();
 loadOrders();
 </script>
