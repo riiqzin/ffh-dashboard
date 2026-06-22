@@ -195,11 +195,11 @@ a{text-decoration:none;color:inherit;}
 .detail-inner{padding:20px 22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
 .dt-heading{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
 .dt-table{display:flex;flex-direction:column;}
-.dt-row{display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px solid var(--border);gap:12px;transition:background .15s;border-radius:4px;margin-inline:-4px;}
+.dt-row{display:flex;justify-content:space-between;align-items:center;padding:7px 4px;border-bottom:1px solid var(--border);gap:8px;transition:background .15s;border-radius:4px;margin-inline:-4px;}
 .dt-row:last-child{border-bottom:none;}
 .dt-row:hover{background:rgba(255,255,255,.02);}
 .dt-k{font-size:11.5px;color:var(--text3);flex-shrink:0;}
-.dt-v{font-size:11.5px;color:var(--text);text-align:right;max-width:58%;word-break:break-word;}
+.dt-v{font-size:11.5px;color:var(--text);text-align:right;flex:1;word-break:break-word;}
 .dt-v.mint{color:var(--mint);font-weight:700;}.dt-v.coral{color:var(--coral);}.dt-v.gold{color:var(--gold);}
 .dt-v.big{font-size:16px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
 .product-box{background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;transition:border-color .2s;}
@@ -227,10 +227,9 @@ a{text-decoration:none;color:inherit;}
 .btn-copy:hover{border-color:var(--gold-dim);color:var(--gold);transform:scale(1.04);}
 .btn-copy.copied{border-color:var(--mint-dim);color:var(--mint);animation:scaleIn .2s ease;}
 .btn-copy svg{width:10px;height:10px;}
-.copy-field{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;background:transparent;border:none;color:var(--text3);cursor:pointer;opacity:0;transition:all .15s;flex-shrink:0;font-size:11px;line-height:1;}
-.dt-row:hover .copy-field{opacity:1;}
+.copy-field{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:3px;background:transparent;border:none;color:var(--border3);cursor:pointer;transition:all .15s;flex-shrink:0;font-size:11px;line-height:1;}
 .copy-field:hover{color:var(--gold);background:var(--gold-glow);}
-.copy-field.flashed{color:var(--mint);opacity:1;}
+.copy-field.flashed{color:var(--mint);}
 
 /* ── STEPS ── */
 .steps-track{display:flex;flex-direction:column;margin-bottom:16px;}
@@ -673,13 +672,13 @@ function renderOrder(order,index){
         <div class="product-box"><div class="product-box-label">📦 Produto</div><div class="product-box-name">${collLabel}</div><div class="product-box-sub">${typeLabel}${variant?' · '+variant:''}</div></div>
         <div class="dt-heading"><span>👤</span> Cliente &amp; entrega</div>
         <div class="dt-table">
-          <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${name}<button class="copy-field" onclick="copyField(this,\`${name}\`)">⎘</button></span></div>
-          <div class="dt-row"><span class="dt-k">CPF</span><span class="dt-v" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${customer?.identification||customer?.cpf||'—'}<button class="copy-field" onclick="copyField(this,\`${customer?.identification||customer?.cpf||''}\`)">⎘</button></span></div>
-          <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${customer?.email||'—'}<button class="copy-field" onclick="copyField(this,\`${customer?.email||''}\`)">⎘</button></span></div>
-          <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${customer?.phone||'—'}<button class="copy-field" onclick="copyField(this,\`${customer?.phone||''}\`)">⎘</button></span></div>
-          <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${(order.shipping_address?.address||'—')+(order.shipping_address?.number?', '+order.shipping_address.number:'')+(order.shipping_address?.floor?' '+order.shipping_address.floor:'')}<button class="copy-field" onclick="copyField(this,\`${(order.shipping_address?.address||'')}${order.shipping_address?.number?', '+order.shipping_address.number:''}\`)">⎘</button></span></div>
-          <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state?', '+state:''}</span></div>
-          <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum" style="display:flex;align-items:center;gap:5px;justify-content:flex-end">${order.shipping_address?.zipcode||'—'}<button class="copy-field" onclick="copyField(this,\`${order.shipping_address?.zipcode||''}\`)">⎘</button></span></div>
+          <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span><button class="copy-field" onclick="copyField(this,\`${name}\`)">⎘</button></div>
+          <div class="dt-row"><span class="dt-k">CPF</span><span class="dt-v tabnum">${customer?.identification||customer?.cpf||'—'}</span><button class="copy-field" onclick="copyField(this,\`${customer?.identification||customer?.cpf||\'\'}\`)">⎘</button></div>
+          <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email||'—'}</span><button class="copy-field" onclick="copyField(this,\`${customer?.email||\'\'}\`)">⎘</button></div>
+          <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone||'—'}</span><button class="copy-field" onclick="copyField(this,\`${customer?.phone||\'\'}\`)">⎘</button></div>
+          <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address||'—')+(order.shipping_address?.number?\', \'+order.shipping_address.number:\'\')+(order.shipping_address?.floor?\' \'+order.shipping_address.floor:\'\')}</span><button class="copy-field" onclick="copyField(this,\`${(order.shipping_address?.address||\'\')}${order.shipping_address?.number?\', \'+order.shipping_address.number:\'\'}\`)">⎘</button></div>
+          <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state?\', \'+state:\'\'}</span></div>
+          <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum">${order.shipping_address?.zipcode||'—'}</span><button class="copy-field" onclick="copyField(this,\`${order.shipping_address?.zipcode||\'\'}\`)">⎘</button></div>
           <div class="dt-row"><span class="dt-k">Frete</span><span class="dt-v">${shippingMethod}</span></div>
           <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost>0?fmtBRL(shippingCost):'Grátis'}</span></div>
           ${prazoEntregaRow}
