@@ -608,7 +608,7 @@ function renderOrder(order){
     {done:true,label:'Pedido recebido'},
     {done:!!meta.hotCode,label:meta.hotCode?'Criado na Hotprinti':'Criar na Hotprinti'},
     {done:!!trackingCode,label:trackingCode?'Rastreio gerado':'Aguardando rastreio'},
-    {done:status==='enviado',label:status==='enviado'?`Pedido enviado — ${diasUtil} dias úteis`:'Pedido enviado'},
+    {done:status==='enviado',label:status==='enviado'?`Pedido enviado — ${diasUtil} dias úteis após o pedido`:'Pedido enviado'},
   ];
   const stepsHtml=steps.map(s=>`<div class="step-item${s.done?' done':''}"><div class="step-circle${s.done?' done':''}">${s.done?checkmark():''}</div><div class="step-text">${s.label}</div></div>`).join('');
 
