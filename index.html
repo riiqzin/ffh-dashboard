@@ -14,6 +14,7 @@
   --red:#ef4444;--red-bg:#1f0a0a;
   --yellow:#f59e0b;--yellow-bg:#1f1505;
   --blue:#60a5fa;--blue-bg:#0a1220;
+  --orange:#f97316;--orange-bg:#1f0e05;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.5;min-height:100vh;}
@@ -50,12 +51,27 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .collections-row{display:flex;gap:7px;margin-bottom:24px;flex-wrap:wrap;}
 .coll-chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);}
 .coll-chip b{color:var(--gold);margin-left:3px;}
-.orders-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.filters{display:flex;gap:6px;}
+
+/* ── Toolbar: busca + filtros de período + filtros de status ── */
+.orders-header{margin-bottom:12px;}
+.orders-header-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.orders-header-row2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;max-width:280px;}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);width:13px;height:13px;pointer-events:none;}
+.search-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px 6px 30px;color:var(--text);font-size:12px;outline:none;transition:border-color .15s;}
+.search-input:focus{border-color:var(--gold3);}
+.search-input::placeholder{color:var(--text3);}
+.filters{display:flex;gap:6px;flex-wrap:wrap;}
 .filter-btn{padding:5px 11px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;}
 .filter-btn:hover,.filter-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
+.period-select{padding:5px 10px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;outline:none;transition:border-color .15s;}
+.period-select:focus{border-color:var(--gold3);}
+
 .order-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;transition:border-color .15s;}
 .order-card:hover{border-color:var(--border2);}
+/* Indicador de atraso: card vermelho quando sem código Hotprinti há muitos dias */
+.order-card.atrasado{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.03);}
+.order-card.atrasado .order-header{background:rgba(239,68,68,.04);}
 .order-header{padding:14px 18px;display:grid;grid-template-columns:150px 1fr 160px 110px 120px 110px 36px;align-items:center;gap:10px;cursor:pointer;}
 .o-num{font-size:13px;font-weight:600;color:var(--gold);}
 .o-num-sub{font-size:11px;color:var(--text3);margin-top:1px;}
@@ -69,6 +85,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .bg-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(239,68,68,.2);}
 .bg-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
 .bg-gold{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2);}
+.bg-orange{background:var(--orange-bg);color:var(--orange);border:1px solid rgba(249,115,22,.2);}
 .expand-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .expand-btn:hover{border-color:var(--gold3);color:var(--gold);}
 .order-detail{border-top:1px solid var(--border);padding:18px;display:none;background:var(--bg3);}
@@ -93,6 +110,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .form-row .form-input{margin-top:0;}
 .btn-save{padding:7px 12px;background:rgba(201,168,76,.12);border:1px solid var(--gold3);border-radius:6px;color:var(--gold);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-save:hover{background:rgba(201,168,76,.22);}
+/* Botão copiar */
+.btn-copy{padding:5px 9px;background:var(--bg4);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-size:11px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;margin-left:8px;}
+.btn-copy:hover{border-color:var(--gold3);color:var(--gold);}
+.btn-copy.copied{border-color:var(--green);color:var(--green);}
 .prazo-wrap{margin-top:6px;}
 .prazo-bg{background:var(--bg4);border-radius:4px;height:5px;overflow:hidden;}
 .prazo-fill{height:100%;border-radius:4px;transition:width .5s,background .3s;}
@@ -102,6 +123,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .obs-area{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;resize:vertical;min-height:56px;font-family:inherit;margin-top:5px;}
 .obs-area::placeholder{color:var(--text3);}
 .alert-box{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--red);display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+/* Alerta criar Hotprinti */
+.alert-hot{background:rgba(249,115,22,.07);border:1px solid rgba(249,115,22,.25);border-radius:7px;padding:9px 13px;font-size:12px;color:var(--orange);display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+/* Histórico de ações */
+.history-box{background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-top:8px;}
+.history-title{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.history-item{font-size:11px;color:var(--text3);padding:3px 0;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:6px;}
+.history-item:last-child{border-bottom:none;}
+.history-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px;}
 .empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;}
 .config-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px;max-width:480px;margin-bottom:20px;}
 .hot-box{background:rgba(201,168,76,.06);border:1px solid var(--gold3);border-radius:8px;padding:12px;margin-bottom:14px;}
@@ -131,7 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       Custos & Config
     </div>
   </nav>
-  <div class="sidebar-footer">FFH Dashboard v1.0</div>
+  <div class="sidebar-footer">FFH Dashboard v1.1</div>
 </aside>
 
 <main class="main">
@@ -158,7 +187,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
         <div class="metric-card"><div class="metric-label">Ticket médio</div><div class="metric-value" id="m-ticket">—</div><div class="metric-sub">baseado no mês</div></div>
       </div>
 
-      <div class="section-title">Coleções — vendas do mês</div>
+      <div class="section-title">Coleções — vendas do período</div>
       <div class="collections-row">
         <div class="coll-chip">The Walking Dead <b id="c-twd">0</b></div>
         <div class="coll-chip">Supernatural <b id="c-spn">0</b></div>
@@ -168,14 +197,29 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
         <div class="coll-chip">Marty Supreme <b id="c-marty">0</b></div>
       </div>
 
+      <!-- Toolbar completa: busca + período + filtros de status -->
       <div class="orders-header">
-        <div class="section-title" style="margin:0">Pedidos</div>
-        <div class="filters">
-          <button class="filter-btn active" onclick="filterOrders('todos',this)">Todos</button>
-          <button class="filter-btn" onclick="filterOrders('pendente',this)">Pendentes</button>
-          <button class="filter-btn" onclick="filterOrders('producao',this)">Em produção</button>
-          <button class="filter-btn" onclick="filterOrders('enviado',this)">Enviados</button>
-          <button class="filter-btn" onclick="filterOrders('entregue',this)">Entregues</button>
+        <div class="orders-header-row1">
+          <div class="section-title" style="margin:0">Pedidos</div>
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" id="search-input" placeholder="Buscar por nome ou #número..." oninput="applyFilters()">
+          </div>
+        </div>
+        <div class="orders-header-row2">
+          <select class="period-select" id="period-select" onchange="savePeriod();applyFilters()">
+            <option value="7">Últimos 7 dias</option>
+            <option value="30" selected>Últimos 30 dias</option>
+            <option value="60">Últimos 60 dias</option>
+            <option value="90">Últimos 90 dias</option>
+            <option value="0">Todos os pedidos</option>
+          </select>
+          <div class="filters">
+            <button class="filter-btn active" onclick="setStatusFilter('todos',this)">Todos</button>
+            <button class="filter-btn" onclick="setStatusFilter('pendente',this)">Pendentes</button>
+            <button class="filter-btn" onclick="setStatusFilter('producao',this)">Em produção</button>
+            <button class="filter-btn" onclick="setStatusFilter('enviado',this)">Enviados</button>
+          </div>
         </div>
       </div>
       <div id="orders-list"><div class="empty">Carregando pedidos...</div></div>
@@ -219,7 +263,42 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 const COSTS = {'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
 const orderMeta = JSON.parse(localStorage.getItem('ffh-order-meta') || '{}');
 
+// ── Estado global de filtros ──
+let currentStatusFilter = 'todos';
+let allOrders = [];
+
 function saveMeta() { localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta)); }
+
+// ── Persistência do período ──
+function savePeriod() {
+  const val = document.getElementById('period-select').value;
+  localStorage.setItem('ffh-period', val);
+}
+function loadPeriod() {
+  const saved = localStorage.getItem('ffh-period');
+  if (saved !== null) {
+    const sel = document.getElementById('period-select');
+    sel.value = saved;
+  }
+}
+
+// ── Histórico de ações ──
+function pushHistory(orderId, msg) {
+  orderMeta[orderId] = orderMeta[orderId] || {};
+  orderMeta[orderId].history = orderMeta[orderId].history || [];
+  const ts = new Date().toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+  orderMeta[orderId].history.unshift({ ts, msg });
+  saveMeta();
+}
+
+function renderHistory(id) {
+  const hist = orderMeta[id]?.history || [];
+  if (!hist.length) return '';
+  const items = hist.slice(0,6).map(h =>
+    `<div class="history-item"><span class="history-dot"></span><span><b style="color:var(--text2)">${h.ts}</b> — ${h.msg}</span></div>`
+  ).join('');
+  return `<div class="history-box"><div class="history-title">📋 Histórico</div>${items}</div>`;
+}
 
 function calcProfit(order) {
   const total = parseFloat(order.total);
@@ -249,27 +328,19 @@ function fmtDate(iso) {
   return d.toLocaleDateString('pt-BR') + ' · ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
 }
 
-// Detecta coleção pelo nome real do produto
-function getCollectionLabel(name) {
-  const n = (name || '').toLowerCase();
-  if (n.includes('walking dead') || n.includes('twd')) return 'The Walking Dead';
-  if (n.includes('supernatural') || n.includes('spn')) return 'Supernatural';
-  if (n.includes('the boys') || n.includes('boys')) return 'The Boys';
-  if (n.includes('vampire') || n.includes('tvd')) return 'The Vampire Diaries';
-  if (n.includes('invincible')) return 'Invincible';
-  if (n.includes('marty')) return 'Marty Supreme';
-  return null;
-}
+// ── Nomes de coleção corretos ──
+const COLLECTIONS = [
+  { keys: ['walking dead','twd'],          label: 'The Walking Dead',     id: 'twd'   },
+  { keys: ['supernatural','spn'],          label: 'Supernatural',         id: 'spn'   },
+  { keys: ['the boys','boys'],             label: 'The Boys',             id: 'boys'  },
+  { keys: ['vampire diaries','tvd'],       label: 'The Vampire Diaries',  id: 'tvd'   },
+  { keys: ['invincible'],                  label: 'Invincible',           id: 'inv'   },
+  { keys: ['marty supreme','marty'],       label: 'Marty Supreme',        id: 'marty' },
+];
 
-function getCollectionKey(name) {
+function getCollection(name) {
   const n = (name || '').toLowerCase();
-  if (n.includes('walking dead') || n.includes('twd')) return 'twd';
-  if (n.includes('supernatural') || n.includes('spn')) return 'spn';
-  if (n.includes('the boys') || n.includes('boys')) return 'boys';
-  if (n.includes('vampire') || n.includes('tvd')) return 'tvd';
-  if (n.includes('invincible')) return 'inv';
-  if (n.includes('marty')) return 'marty';
-  return null;
+  return COLLECTIONS.find(c => c.keys.some(k => n.includes(k))) || null;
 }
 
 function getPaymentBadge(order) {
@@ -286,15 +357,17 @@ function getPaymentStatus(order) {
   return '<span class="badge bg-red">● ' + s + '</span>';
 }
 
+// ── Status sem "Entregue" — agora usa tracking da Nuvemshop pra "Enviado" ──
 function getOrderStatus(order, meta) {
-  if (order.fulfillment_status === 'fulfilled') return 'entregue';
-  if (order.shipping_status === 'shipped' || order.tracking_number) return 'enviado';
+  const trackingCode = order.tracking_number || order.tracking_code
+    || order.shipping_tracking_number
+    || (order.fulfillments?.[0]?.tracking_number) || '';
+  if (order.shipping_status === 'shipped' || trackingCode) return 'enviado';
   if (meta?.hotCode) return 'producao';
   return 'pendente';
 }
 
 function getStatusBadge(status) {
-  if (status === 'entregue') return '<span class="badge bg-green">● Entregue</span>';
   if (status === 'enviado') return '<span class="badge bg-blue">● Enviado</span>';
   if (status === 'producao') return '<span class="badge bg-gold">● Em produção</span>';
   return '<span class="badge bg-yellow">● Pendente</span>';
@@ -304,7 +377,6 @@ function checkmark() {
   return '<svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 6l3 3 5-5" stroke="#0d0d0d" stroke-width="1.8"/></svg>';
 }
 
-// Calcula dias úteis entre duas datas
 function calcBusinessDays(startIso, endDate) {
   let d = new Date(startIso);
   const end = endDate || new Date();
@@ -314,6 +386,17 @@ function calcBusinessDays(startIso, endDate) {
     d.setDate(d.getDate() + 1);
   }
   return util;
+}
+
+// ── Prazo de entrega estimado da Nuvemshop ──
+function getShippingDeadline(order) {
+  // Tenta campos comuns da Nuvemshop para prazo estimado
+  const raw = order.shipping_min_days || order.shipping_max_days
+    || order.shipping_estimated_days
+    || order.shipping_option_details?.min_delivery_days
+    || order.shipping_option_details?.max_delivery_days
+    || null;
+  return raw;
 }
 
 function renderOrder(order) {
@@ -329,38 +412,86 @@ function renderOrder(order) {
 
   const product = order.products?.[0];
   const rawProductName = product?.name?.pt || product?.name?.['pt-BR'] || product?.name?.en || '';
-  const collectionLabel = getCollectionLabel(rawProductName) || rawProductName || 'Produto';
+  const coll = getCollection(rawProductName);
+  const collectionLabel = coll ? coll.label : (rawProductName || 'Produto');
   const variant = product?.variant_values?.join(' · ') || '';
   const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
 
-  // Rastreio vem da API Nuvemshop; campo manual só como fallback se API não retornar
-  const trackingCode = order.tracking_number || order.tracking_code || order.shipping_tracking_number || (order.fulfillments?.[0]?.tracking_number) || '';
+  const trackingCode = order.tracking_number || order.tracking_code
+    || order.shipping_tracking_number
+    || (order.fulfillments?.[0]?.tracking_number) || '';
   const trackingUrl = trackingCode ? 'https://rastreamento.correios.com.br/app/index.php?objetos=' + trackingCode : '';
 
   const shippingMethod = order.shipping_carrier_name || order.shipping_option || '—';
   const shippingCost = parseFloat(order.shipping_cost_customer || 0);
 
-  // Prazo contado a partir da data do pedido
   const orderDate = order.created_at;
   const diasUtil = calcBusinessDays(orderDate);
   const pct = Math.min(Math.round((diasUtil / 8) * 100), 100);
   const prazoColor = diasUtil >= 8 ? 'var(--red)' : diasUtil >= 6 ? 'var(--yellow)' : 'var(--green)';
 
-  // Dias úteis em produção (para pedidos enviados)
-  let enviadoInfo = '';
-  if (status === 'enviado' || status === 'entregue') {
-    const diasProd = calcBusinessDays(orderDate);
-    enviadoInfo = `<div style="font-size:11px;color:var(--text3);margin-top:4px">Enviado após ${diasProd} dias úteis em produção</div>`;
+  // Indicador de atraso: pago há 3+ dias úteis sem código Hotprinti
+  const isAtrasado = !meta.hotCode && order.payment_status === 'paid' && diasUtil >= 3;
+
+  // Prazo estimado de entrega da Nuvemshop
+  const estMin = order.shipping_min_days;
+  const estMax = order.shipping_max_days;
+  let prazoEntregaHtml = '';
+  if (estMin || estMax) {
+    const txt = estMin && estMax
+      ? `${estMin}–${estMax} dias úteis`
+      : `${estMin || estMax} dias úteis`;
+    prazoEntregaHtml = `<div class="dt-row"><span class="dt-k">Prazo estimado entrega</span><span class="dt-v gold">${txt}</span></div>`;
   }
 
-  const alertHtml = diasUtil >= 8 && status === 'producao'
+  // Alerta prazo Hotprinti esgotado
+  const alertPrazo = diasUtil >= 8 && status === 'producao'
     ? '<div class="alert-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Prazo esgotado — entre em contato com a Hotprinti</div>'
     : '';
 
+  // Alerta criar pedido na Hotprinti (pago, sem código, 0+ dias)
+  const alertHot = !meta.hotCode && order.payment_status === 'paid'
+    ? `<div class="alert-hot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Criar pedido na Hotprinti${isAtrasado ? ' — <b>'+diasUtil+' dias úteis sem código!</b>' : ''}</div>`
+    : '';
+
+  // Hotprinti box: com botão copiar se já tem código
+  let hotBox = '';
+  if (meta.hotCode) {
+    hotBox = `
+      <div class="hot-box">
+        <div class="hot-box-label">⭐ Código Hotprinti</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="font-size:15px;font-weight:700;color:var(--gold)">${meta.hotCode}</div>
+          <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${meta.hotCode}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>
+      </div>`;
+  } else {
+    hotBox = `
+      <div class="hot-box" id="hotbox-${id}">
+        <div class="hot-box-label">⭐ Código Hotprinti</div>
+        <div class="form-row" style="margin-top:0">
+          <input class="form-input" id="hot-${id}" placeholder="Ex: HP-123456" style="margin-top:0">
+          <button class="btn-save" onclick="saveHotprinti('${id}')">Salvar</button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>
+      </div>`;
+  }
+
+  const enviadoStep = status === 'enviado'
+    ? `Pedido enviado — ${calcBusinessDays(orderDate)} dias úteis`
+    : 'Pedido enviado';
+
   return `
-<div class="order-card" data-status="${status}" id="oc-${id}">
+<div class="order-card${isAtrasado ? ' atrasado' : ''}" data-status="${status}" data-num="${order.number}" data-name="${name.toLowerCase()}" id="oc-${id}">
   <div class="order-header" onclick="toggleOrder('od-${id}','cb-${id}')">
-    <div><div class="o-num">#${order.number}</div><div class="o-num-sub">${fmtDate(order.created_at)}</div></div>
+    <div>
+      <div class="o-num">#${order.number}${isAtrasado ? ' <span style="font-size:10px;color:var(--orange)">⚠</span>' : ''}</div>
+      <div class="o-num-sub">${fmtDate(order.created_at)}</div>
+    </div>
     <div><div class="o-name">${name}</div><div class="o-name-sub">${city}${state ? ', ' + state : ''}</div></div>
     <div>
       <div style="font-size:12px;font-weight:600;color:var(--text)">${collectionLabel}</div>
@@ -392,6 +523,7 @@ function renderOrder(order) {
       <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v">${order.shipping_address?.zipcode || '—'}</span></div>
       <div class="dt-row"><span class="dt-k">Frete escolhido</span><span class="dt-v">${shippingMethod}</span></div>
       <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost > 0 ? fmtBRL(shippingCost) : 'Grátis'}</span></div>
+      ${prazoEntregaHtml}
       <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${getPaymentBadge(order)}</span></div>
     </div>
 
@@ -409,13 +541,10 @@ function renderOrder(order) {
     </div>
 
     <div>
-      <div class="hot-box">
-        <div class="hot-box-label">⭐ Código Hotprinti</div>
-        ${meta.hotCode
-          ? '<div style="font-size:15px;font-weight:700;color:var(--gold)">' + meta.hotCode + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>'
-          : '<div class="form-row" style="margin-top:0"><input class="form-input" id="hot-' + id + '" placeholder="Ex: HP-123456" style="margin-top:0"><button class="btn-save" onclick="saveHotprinti(\'' + id + '\')">Salvar</button></div><div style="font-size:10px;color:var(--text3);margin-top:5px">Insira após criar o pedido na Hotprinti</div>'
-        }
-      </div>
+      ${alertHot}
+      ${alertPrazo}
+
+      ${hotBox}
 
       <div class="steps" style="margin-bottom:14px">
         <div class="step done"><div class="step-circle done">${checkmark()}</div>Pedido recebido</div>
@@ -427,13 +556,9 @@ function renderOrder(order) {
           <div class="step-circle${trackingCode ? ' done' : ''}">${trackingCode ? checkmark() : ''}</div>
           <span>${trackingCode ? 'Rastreio gerado' : 'Aguardando rastreio'}</span>
         </div>
-        <div class="step${status === 'enviado' || status === 'entregue' ? ' done' : ''}">
-          <div class="step-circle${status === 'enviado' || status === 'entregue' ? ' done' : ''}">${status === 'enviado' || status === 'entregue' ? checkmark() : ''}</div>
-          <span>Pedido enviado${status === 'enviado' || status === 'entregue' ? ' — ' + calcBusinessDays(orderDate) + ' dias úteis' : ''}</span>
-        </div>
-        <div class="step${status === 'entregue' ? ' done' : ''}">
-          <div class="step-circle${status === 'entregue' ? ' done' : ''}">${status === 'entregue' ? checkmark() : ''}</div>
-          <span>Entregue</span>
+        <div class="step${status === 'enviado' ? ' done' : ''}">
+          <div class="step-circle${status === 'enviado' ? ' done' : ''}">${status === 'enviado' ? checkmark() : ''}</div>
+          <span>${enviadoStep}</span>
         </div>
       </div>
 
@@ -443,10 +568,7 @@ function renderOrder(order) {
           <div class="prazo-bg"><div class="prazo-fill" style="width:${pct}%;background:${prazoColor}"></div></div>
           <div class="prazo-info"><span>${diasUtil} / 8 dias úteis (desde o pedido)</span><span>8 dias úteis</span></div>
         </div>
-        ${enviadoInfo}
       </div>
-
-      ${alertHtml}
 
       <div style="margin-bottom:10px">
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">🚚 Rastreio Correios</div>
@@ -460,10 +582,26 @@ function renderOrder(order) {
         <div style="font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px">📝 Observações</div>
         <textarea class="obs-area" id="obs-${id}" onblur="saveObs('${id}')" placeholder="Anotações sobre este pedido...">${meta.obs || ''}</textarea>
       </div>
+
+      ${renderHistory(id)}
     </div>
 
   </div>
 </div>`;
+}
+
+// ── Copiar código Hotprinti ──
+function copyCode(id, code) {
+  navigator.clipboard.writeText(code).then(() => {
+    const btn = document.getElementById('copy-' + id);
+    if (!btn) return;
+    btn.classList.add('copied');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg> Copiado!';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar';
+    }, 2000);
+  });
 }
 
 function saveHotprinti(id) {
@@ -473,18 +611,57 @@ function saveHotprinti(id) {
   if (!code) return;
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].hotCode = code;
+  pushHistory(id, `Código Hotprinti salvo: ${code}`);
   saveMeta();
-  const hotBox = input.closest('.hot-box');
+  // Substitui o box sem reload completo
+  const hotBox = document.getElementById('hotbox-' + id);
   if (hotBox) {
-    hotBox.innerHTML = '<div class="hot-box-label">⭐ Código Hotprinti</div><div style="font-size:15px;font-weight:700;color:var(--gold)">' + code + '</div><div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>';
+    hotBox.outerHTML = `
+      <div class="hot-box">
+        <div class="hot-box-label">⭐ Código Hotprinti</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="font-size:15px;font-weight:700;color:var(--gold)">${code}</div>
+          <button class="btn-copy" id="copy-${id}" onclick="copyCode('${id}','${code}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copiar
+          </button>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px">Use para suporte com o fornecedor</div>
+      </div>`;
+    // Atualiza alerta e step inline
+    const card = document.getElementById('oc-' + id);
+    if (card) {
+      card.classList.remove('atrasado');
+      // Atualiza badge de status
+      const statusCel = card.querySelector('.order-header > div:nth-child(5)');
+      if (statusCel) statusCel.innerHTML = getStatusBadge('producao');
+    }
+    // Adiciona histórico no DOM
+    const detailCol3 = document.querySelector(`#od-${id} > div:last-child`);
+    if (detailCol3) {
+      const existing = detailCol3.querySelector('.history-box');
+      if (existing) existing.outerHTML = renderHistory(id);
+      else detailCol3.insertAdjacentHTML('beforeend', renderHistory(id));
+    }
   }
 }
 
 function saveObs(id) {
   const obs = document.getElementById('obs-' + id)?.value || '';
+  const prev = orderMeta[id]?.obs || '';
+  if (obs === prev) return; // Sem mudança, não registra
   orderMeta[id] = orderMeta[id] || {};
   orderMeta[id].obs = obs;
+  const preview = obs.length > 30 ? obs.slice(0,30) + '…' : obs;
+  pushHistory(id, `Observação salva: "${preview}"`);
   saveMeta();
+  // Atualiza histórico no DOM
+  const detailCol3 = document.querySelector(`#od-${id} > div:last-child`);
+  if (detailCol3) {
+    const existing = detailCol3.querySelector('.history-box');
+    if (existing) existing.outerHTML = renderHistory(id);
+    else detailCol3.insertAdjacentHTML('beforeend', renderHistory(id));
+  }
 }
 
 function toggleOrder(detailId, btnId) {
@@ -494,11 +671,43 @@ function toggleOrder(detailId, btnId) {
   b.style.transform = open ? 'rotate(180deg)' : '';
 }
 
-function filterOrders(status, btn) {
+// ── Filtros combinados: status + período + busca ──
+function setStatusFilter(status, btn) {
+  currentStatusFilter = status;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const query = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const periodDays = parseInt(document.getElementById('period-select')?.value || '30');
+  const now = new Date();
+
   document.querySelectorAll('.order-card').forEach(card => {
-    card.style.display = (status === 'todos' || card.dataset.status === status) ? '' : 'none';
+    const cardStatus = card.dataset.status;
+    const cardNum = card.dataset.num || '';
+    const cardName = card.dataset.name || '';
+
+    // Filtro de status
+    const statusOk = currentStatusFilter === 'todos' || cardStatus === currentStatusFilter;
+
+    // Filtro de busca
+    const searchOk = !query || cardNum.includes(query.replace('#','')) || cardName.includes(query);
+
+    // Filtro de período — lê data do sub texto (data do pedido)
+    let periodOk = true;
+    if (periodDays > 0) {
+      const orderId = card.id.replace('oc-','');
+      const order = allOrders.find(o => String(o.number) === String(orderId));
+      if (order) {
+        const orderDate = new Date(order.created_at);
+        const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
+        periodOk = diffDays <= periodDays;
+      }
+    }
+
+    card.style.display = (statusOk && searchOk && periodOk) ? '' : 'none';
   });
 }
 
@@ -514,31 +723,34 @@ function showTab(tab, el) {
 
 function updateMetrics(orders) {
   const now = new Date();
-  const mes = now.getMonth();
-  const ano = now.getFullYear();
+  const periodDays = parseInt(document.getElementById('period-select')?.value || '30');
   const hoje = now.toDateString();
-  const mesOrders = orders.filter(o => {
-    const d = new Date(o.created_at);
-    return d.getMonth() === mes && d.getFullYear() === ano;
-  });
+
+  const mesOrders = periodDays === 0
+    ? orders
+    : orders.filter(o => (now - new Date(o.created_at)) / (1000*60*60*24) <= periodDays);
+
   const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
   const fat = mesOrders.reduce((s, o) => s + parseFloat(o.total), 0);
   const lucroTotal = mesOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
   const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
   const ticket = mesOrders.length ? fat / mesOrders.length : 0;
   const margem = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
+
   document.getElementById('m-hoje').textContent = hojeCount;
   document.getElementById('m-fat').textContent = fmtBRL(fat);
-  document.getElementById('m-fat-sub').textContent = now.toLocaleString('pt-BR',{month:'long'}) + ' ' + ano;
+  document.getElementById('m-fat-sub').textContent = periodDays === 0 ? 'todos os pedidos' : `últimos ${periodDays} dias`;
   document.getElementById('m-lucro').textContent = fmtBRL(lucroTotal);
   document.getElementById('m-lucro-sub').textContent = 'margem ' + margem + '%';
   document.getElementById('m-pendentes').textContent = pendentes;
   document.getElementById('m-ticket').textContent = fmtBRL(ticket);
+
   const colCounts = {twd:0,spn:0,boys:0,tvd:0,inv:0,marty:0};
   mesOrders.forEach(o => {
     const p = o.products?.[0];
-    const col = getCollectionKey(p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '');
-    if (col) colCounts[col]++;
+    const rawName = p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '';
+    const col = getCollection(rawName);
+    if (col) colCounts[col.id]++;
   });
   Object.keys(colCounts).forEach(k => {
     const el = document.getElementById('c-' + k);
@@ -556,6 +768,7 @@ async function loadOrders() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const orders = await res.json();
     if (!Array.isArray(orders)) throw new Error('Resposta inválida');
+    allOrders = orders;
     document.getElementById('api-status').className = 'badge bg-green';
     document.getElementById('api-status').textContent = '● Conectado';
     updateMetrics(orders);
@@ -565,6 +778,7 @@ async function loadOrders() {
     } else {
       list.innerHTML = orders.map(o => renderOrder(o)).join('');
     }
+    applyFilters();
     const now = new Date();
     statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
   } catch (err) {
@@ -577,6 +791,8 @@ async function loadOrders() {
   }
 }
 
+// ── Init ──
+loadPeriod();
 loadOrders();
 </script>
 </body>
