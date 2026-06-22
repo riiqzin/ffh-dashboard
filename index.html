@@ -64,6 +64,15 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .filters{display:flex;gap:6px;flex-wrap:wrap;}
 .filter-btn{padding:5px 11px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;}
 .filter-btn:hover,.filter-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
+.period-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.period-presets{display:flex;gap:4px;}
+.preset-btn{padding:5px 9px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.preset-btn:hover,.preset-btn.active{border-color:var(--gold3);color:var(--gold);background:rgba(201,168,76,.08);}
+.date-from-wrap{display:flex;align-items:center;gap:5px;}
+.date-label{font-size:11px;color:var(--text3);white-space:nowrap;}
+.date-input{padding:5px 8px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;outline:none;transition:border-color .15s;}
+.date-input:focus{border-color:var(--gold3);}
+.date-sep{font-size:11px;color:var(--text3);}
 .period-select{padding:5px 10px;border-radius:6px;font-size:11px;border:1px solid var(--border);color:var(--text2);background:var(--bg3);cursor:pointer;outline:none;transition:border-color .15s;}
 .period-select:focus{border-color:var(--gold3);}
 
@@ -207,13 +216,20 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
           </div>
         </div>
         <div class="orders-header-row2">
-          <select class="period-select" id="period-select" onchange="savePeriod();applyFilters()">
-            <option value="7">Últimos 7 dias</option>
-            <option value="30" selected>Últimos 30 dias</option>
-            <option value="60">Últimos 60 dias</option>
-            <option value="90">Últimos 90 dias</option>
-            <option value="0">Todos os pedidos</option>
-          </select>
+          <div class="period-wrap">
+            <div class="period-presets">
+              <button class="preset-btn" onclick="setPreset('hoje',this)">Hoje</button>
+              <button class="preset-btn" onclick="setPreset('7',this)">7d</button>
+              <button class="preset-btn active" onclick="setPreset('30',this)">30d</button>
+              <button class="preset-btn" onclick="setPreset('0',this)">Todos</button>
+            </div>
+            <div class="date-from-wrap">
+              <span class="date-label">De</span>
+              <input type="date" class="date-input" id="date-from" onchange="setPreset('custom',null)">
+              <span class="date-sep">até</span>
+              <input type="date" class="date-input" id="date-to" onchange="setPreset('custom',null)">
+            </div>
+          </div>
           <div class="filters">
             <button class="filter-btn active" onclick="setStatusFilter('todos',this)">Todos</button>
             <button class="filter-btn" onclick="setStatusFilter('pendente',this)">Pendentes</button>
@@ -269,17 +285,73 @@ let allOrders = [];
 
 function saveMeta() { localStorage.setItem('ffh-order-meta', JSON.stringify(orderMeta)); }
 
-// ── Persistência do período ──
-function savePeriod() {
-  const val = document.getElementById('period-select').value;
-  localStorage.setItem('ffh-period', val);
+// ── Persistência e lógica do filtro de período ──
+let activePeriodPreset = '30'; // 'hoje' | '7' | '30' | '0' | 'custom'
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
 }
-function loadPeriod() {
-  const saved = localStorage.getItem('ffh-period');
-  if (saved !== null) {
-    const sel = document.getElementById('period-select');
-    sel.value = saved;
+
+function setPreset(preset, btn) {
+  activePeriodPreset = preset;
+  // Atualiza botões de preset
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  const now = new Date();
+  const toEl = document.getElementById('date-to');
+  const fromEl = document.getElementById('date-from');
+
+  if (preset === 'hoje') {
+    fromEl.value = todayStr();
+    toEl.value = todayStr();
+  } else if (preset === '7') {
+    const d = new Date(now); d.setDate(d.getDate() - 7);
+    fromEl.value = d.toISOString().slice(0,10);
+    toEl.value = todayStr();
+  } else if (preset === '30') {
+    const d = new Date(now); d.setDate(d.getDate() - 30);
+    fromEl.value = d.toISOString().slice(0,10);
+    toEl.value = todayStr();
+  } else if (preset === '0') {
+    fromEl.value = '2020-01-01';
+    toEl.value = todayStr();
   }
+  // 'custom': não mexe nos inputs, usuário já editou
+
+  savePeriod();
+  applyFilters();
+  updateMetrics(allOrders);
+}
+
+function savePeriod() {
+  const fromEl = document.getElementById('date-from');
+  const toEl = document.getElementById('date-to');
+  localStorage.setItem('ffh-period-preset', activePeriodPreset);
+  localStorage.setItem('ffh-period-from', fromEl?.value || '');
+  localStorage.setItem('ffh-period-to', toEl?.value || '');
+}
+
+function loadPeriod() {
+  const preset = localStorage.getItem('ffh-period-preset') || '30';
+  const from   = localStorage.getItem('ffh-period-from') || '';
+  const to     = localStorage.getItem('ffh-period-to')   || '';
+  const fromEl = document.getElementById('date-from');
+  const toEl   = document.getElementById('date-to');
+
+  if (from && fromEl) fromEl.value = from;
+  if (to && toEl)     toEl.value   = to;
+
+  // Ativa o botão de preset correspondente
+  activePeriodPreset = preset;
+  document.querySelectorAll('.preset-btn').forEach(b => {
+    const p = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+    if (p === preset) b.classList.add('active');
+    else b.classList.remove('active');
+  });
+
+  // Se não havia valor salvo, inicializa com 30d
+  if (!from) setPreset('30', document.querySelector('.preset-btn.active'));
 }
 
 // ── Histórico de ações ──
@@ -329,18 +401,37 @@ function fmtDate(iso) {
 }
 
 // ── Nomes de coleção corretos ──
+// keys são buscados no nome do produto, SKU, categorias e tags
 const COLLECTIONS = [
-  { keys: ['walking dead','twd'],          label: 'The Walking Dead',     id: 'twd'   },
-  { keys: ['supernatural','spn'],          label: 'Supernatural',         id: 'spn'   },
-  { keys: ['the boys','boys'],             label: 'The Boys',             id: 'boys'  },
-  { keys: ['vampire diaries','tvd'],       label: 'The Vampire Diaries',  id: 'tvd'   },
-  { keys: ['invincible'],                  label: 'Invincible',           id: 'inv'   },
-  { keys: ['marty supreme','marty'],       label: 'Marty Supreme',        id: 'marty' },
+  { keys: ['walking dead','twd','walkingdead'],           label: 'The Walking Dead',     id: 'twd'   },
+  { keys: ['supernatural','spn'],                        label: 'Supernatural',         id: 'spn'   },
+  { keys: ['the boys','theboys','boys'],                  label: 'The Boys',             id: 'boys'  },
+  { keys: ['vampire diaries','tvd','vampirediaries'],     label: 'The Vampire Diaries',  id: 'tvd'   },
+  { keys: ['invincible','invincivel'],                    label: 'Invincible',           id: 'inv'   },
+  // Marty Supreme: produto pode ter nome genérico — buscamos também no SKU e categorias
+  { keys: ['marty supreme','marty','martysupreme','ms-','ms_'], label: 'Marty Supreme', id: 'marty' },
 ];
 
-function getCollection(name) {
-  const n = (name || '').toLowerCase();
-  return COLLECTIONS.find(c => c.keys.some(k => n.includes(k))) || null;
+function getCollection(order) {
+  // Aceita tanto um objeto order quanto uma string de nome legado
+  let sources = [];
+  if (typeof order === 'string') {
+    sources = [order];
+  } else {
+    const p = order?.products?.[0];
+    if (!p) return null;
+    // Coleta todos os campos onde o nome da coleção pode aparecer
+    sources = [
+      p?.name?.pt, p?.name?.['pt-BR'], p?.name?.en,
+      p?.sku, p?.barcode,
+      ...(p?.categories || []).map(c => c?.name?.pt || c?.name?.['pt-BR'] || c?.name?.en || ''),
+      ...(p?.tags ? (typeof p.tags === 'string' ? p.tags.split(',') : p.tags) : []),
+      // variant values também (ex: "Marty Supreme GG Frente Preto")
+      ...(p?.variant_values || []),
+    ].filter(Boolean);
+  }
+  const haystack = sources.join(' ').toLowerCase();
+  return COLLECTIONS.find(c => c.keys.some(k => haystack.includes(k))) || null;
 }
 
 function getPaymentBadge(order) {
@@ -412,7 +503,7 @@ function renderOrder(order) {
 
   const product = order.products?.[0];
   const rawProductName = product?.name?.pt || product?.name?.['pt-BR'] || product?.name?.en || '';
-  const coll = getCollection(rawProductName);
+  const coll = getCollection(order);
   const collectionLabel = coll ? coll.label : (rawProductName || 'Produto');
   const variant = product?.variant_values?.join(' · ') || '';
   const typeLabel = (fin.isBoxy ? 'Oversized Boxy' : 'Tradicional') + (fin.isCostas ? ' · Costas' : ' · Frente');
@@ -671,40 +762,37 @@ function toggleOrder(detailId, btnId) {
   b.style.transform = open ? 'rotate(180deg)' : '';
 }
 
-// ── Filtros combinados: status + período + busca ──
+// ── Filtros combinados: status + período por data + busca ──
 function setStatusFilter(status, btn) {
   currentStatusFilter = status;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   applyFilters();
+  updateMetrics(allOrders);
 }
 
 function applyFilters() {
-  const query = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
-  const periodDays = parseInt(document.getElementById('period-select')?.value || '30');
-  const now = new Date();
+  const query   = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+  const fromVal = document.getElementById('date-from')?.value || '';
+  const toVal   = document.getElementById('date-to')?.value   || '';
+  const fromDate = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+  const toDate   = toVal   ? new Date(toVal   + 'T23:59:59') : null;
 
   document.querySelectorAll('.order-card').forEach(card => {
     const cardStatus = card.dataset.status;
-    const cardNum = card.dataset.num || '';
-    const cardName = card.dataset.name || '';
+    const cardNum    = card.dataset.num  || '';
+    const cardName   = card.dataset.name || '';
 
-    // Filtro de status
     const statusOk = currentStatusFilter === 'todos' || cardStatus === currentStatusFilter;
-
-    // Filtro de busca
     const searchOk = !query || cardNum.includes(query.replace('#','')) || cardName.includes(query);
 
-    // Filtro de período — lê data do sub texto (data do pedido)
     let periodOk = true;
-    if (periodDays > 0) {
-      const orderId = card.id.replace('oc-','');
-      const order = allOrders.find(o => String(o.number) === String(orderId));
-      if (order) {
-        const orderDate = new Date(order.created_at);
-        const diffDays = (now - orderDate) / (1000 * 60 * 60 * 24);
-        periodOk = diffDays <= periodDays;
-      }
+    const orderId = card.id.replace('oc-','');
+    const order = allOrders.find(o => String(o.number) === String(orderId));
+    if (order) {
+      const d = new Date(order.created_at);
+      if (fromDate && d < fromDate) periodOk = false;
+      if (toDate   && d > toDate)   periodOk = false;
     }
 
     card.style.display = (statusOk && searchOk && periodOk) ? '' : 'none';
@@ -722,34 +810,53 @@ function showTab(tab, el) {
 }
 
 function updateMetrics(orders) {
-  const now = new Date();
-  const periodDays = parseInt(document.getElementById('period-select')?.value || '30');
-  const hoje = now.toDateString();
+  const now      = new Date();
+  const hoje     = now.toDateString();
+  const fromVal  = document.getElementById('date-from')?.value || '';
+  const toVal    = document.getElementById('date-to')?.value   || '';
+  const fromDate = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+  const toDate   = toVal   ? new Date(toVal   + 'T23:59:59') : null;
 
-  const mesOrders = periodDays === 0
-    ? orders
-    : orders.filter(o => (now - new Date(o.created_at)) / (1000*60*60*24) <= periodDays);
+  // Pedidos no período ativo do filtro de data
+  const periodOrders = orders.filter(o => {
+    const d = new Date(o.created_at);
+    if (fromDate && d < fromDate) return false;
+    if (toDate   && d > toDate)   return false;
+    return true;
+  });
+
+  // Pedidos no período E no filtro de status ativo
+  const filteredOrders = currentStatusFilter === 'todos'
+    ? periodOrders
+    : periodOrders.filter(o => {
+        const meta = orderMeta[o.number] || {};
+        return getOrderStatus(o, meta) === currentStatusFilter;
+      });
 
   const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
-  const fat = mesOrders.reduce((s, o) => s + parseFloat(o.total), 0);
-  const lucroTotal = mesOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
+  const fat       = filteredOrders.reduce((s, o) => s + parseFloat(o.total), 0);
+  const lucroTotal= filteredOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
   const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
-  const ticket = mesOrders.length ? fat / mesOrders.length : 0;
-  const margem = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
+  const ticket    = filteredOrders.length ? fat / filteredOrders.length : 0;
+  const margem    = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
 
-  document.getElementById('m-hoje').textContent = hojeCount;
-  document.getElementById('m-fat').textContent = fmtBRL(fat);
-  document.getElementById('m-fat-sub').textContent = periodDays === 0 ? 'todos os pedidos' : `últimos ${periodDays} dias`;
-  document.getElementById('m-lucro').textContent = fmtBRL(lucroTotal);
+  // Label dinâmico do período
+  let periodoLabel = '';
+  if (fromVal && toVal && fromVal === toVal) periodoLabel = 'hoje';
+  else if (fromVal && toVal) periodoLabel = `${fromVal.split('-').reverse().join('/')} – ${toVal.split('-').reverse().join('/')}`;
+  else periodoLabel = 'período selecionado';
+
+  document.getElementById('m-hoje').textContent   = hojeCount;
+  document.getElementById('m-fat').textContent    = fmtBRL(fat);
+  document.getElementById('m-fat-sub').textContent= periodoLabel;
+  document.getElementById('m-lucro').textContent  = fmtBRL(lucroTotal);
   document.getElementById('m-lucro-sub').textContent = 'margem ' + margem + '%';
   document.getElementById('m-pendentes').textContent = pendentes;
   document.getElementById('m-ticket').textContent = fmtBRL(ticket);
 
   const colCounts = {twd:0,spn:0,boys:0,tvd:0,inv:0,marty:0};
-  mesOrders.forEach(o => {
-    const p = o.products?.[0];
-    const rawName = p?.name?.pt || p?.name?.['pt-BR'] || p?.name?.en || '';
-    const col = getCollection(rawName);
+  filteredOrders.forEach(o => {
+    const col = getCollection(o);
     if (col) colCounts[col.id]++;
   });
   Object.keys(colCounts).forEach(k => {
@@ -779,6 +886,7 @@ async function loadOrders() {
       list.innerHTML = orders.map(o => renderOrder(o)).join('');
     }
     applyFilters();
+    updateMetrics(allOrders);
     const now = new Date();
     statusEl.textContent = 'Última sync: ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) + 'h';
   } catch (err) {
