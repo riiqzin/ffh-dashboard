@@ -413,25 +413,39 @@ const COLLECTIONS = [
 ];
 
 function getCollection(order) {
-  // Aceita tanto um objeto order quanto uma string de nome legado
   let sources = [];
   if (typeof order === 'string') {
     sources = [order];
   } else {
     const p = order?.products?.[0];
     if (!p) return null;
-    // Coleta todos os campos onde o nome da coleção pode aparecer
+    // Na API de pedidos da Nuvemshop, p.name pode ser string OU objeto multilíngue
+    const nameRaw = p?.name;
+    const nameStr = typeof nameRaw === 'string'
+      ? nameRaw
+      : (nameRaw?.pt || nameRaw?.['pt-BR'] || nameRaw?.en || '');
     sources = [
-      p?.name?.pt, p?.name?.['pt-BR'], p?.name?.en,
-      p?.sku, p?.barcode,
-      ...(p?.categories || []).map(c => c?.name?.pt || c?.name?.['pt-BR'] || c?.name?.en || ''),
+      nameStr,
+      p?.sku,
+      p?.barcode,
+      ...(p?.categories || []).map(c => {
+        const cn = c?.name;
+        return typeof cn === 'string' ? cn : (cn?.pt || cn?.['pt-BR'] || cn?.en || '');
+      }),
       ...(p?.tags ? (typeof p.tags === 'string' ? p.tags.split(',') : p.tags) : []),
-      // variant values também (ex: "Marty Supreme GG Frente Preto")
       ...(p?.variant_values || []),
     ].filter(Boolean);
   }
   const haystack = sources.join(' ').toLowerCase();
   return COLLECTIONS.find(c => c.keys.some(k => haystack.includes(k))) || null;
+}
+
+// Helper: lê nome do produto como string (suporta string direta ou objeto multilíngue)
+function getProductName(product) {
+  if (!product) return '';
+  const n = product.name;
+  if (!n) return '';
+  return typeof n === 'string' ? n : (n.pt || n['pt-BR'] || n.en || '');
 }
 
 function getPaymentBadge(order) {
@@ -502,7 +516,7 @@ function renderOrder(order) {
   const state = order.shipping_address?.province || '';
 
   const product = order.products?.[0];
-  const rawProductName = product?.name?.pt || product?.name?.['pt-BR'] || product?.name?.en || '';
+  const rawProductName = getProductName(product);
   const coll = getCollection(order);
   const collectionLabel = coll ? coll.label : (rawProductName || 'Produto');
   const variant = product?.variant_values?.join(' · ') || '';
@@ -524,15 +538,33 @@ function renderOrder(order) {
   // Indicador de atraso: pago há 3+ dias úteis sem código Hotprinti
   const isAtrasado = !meta.hotCode && order.payment_status === 'paid' && diasUtil >= 3;
 
-  // Prazo estimado de entrega da Nuvemshop
-  const estMin = order.shipping_min_days;
-  const estMax = order.shipping_max_days;
+  // Prazo estimado de entrega — Nuvemshop guarda no objeto shipping_option (não no pedido diretamente)
+  // Tenta todos os campos conhecidos onde pode aparecer
+  const estMin = order.shipping_min_days
+    ?? order.shipping_option_reference?.shipping_min_days
+    ?? order.shipping_cost_owner_min_days
+    ?? null;
+  const estMax = order.shipping_max_days
+    ?? order.shipping_option_reference?.shipping_max_days
+    ?? order.shipping_cost_owner_max_days
+    ?? null;
+  // Tenta também extrair do nome do método (ex: "SEDEX - 6 a 7 dias úteis")
   let prazoEntregaHtml = '';
-  if (estMin || estMax) {
-    const txt = estMin && estMax
+  if (estMin !== null || estMax !== null) {
+    const txt = (estMin !== null && estMax !== null)
       ? `${estMin}–${estMax} dias úteis`
-      : `${estMin || estMax} dias úteis`;
+      : `${estMin ?? estMax} dias úteis`;
     prazoEntregaHtml = `<div class="dt-row"><span class="dt-k">Prazo estimado entrega</span><span class="dt-v gold">${txt}</span></div>`;
+  } else {
+    // Tenta extrair do nome do método de envio (ex: "Melhor Envio - Correios SEDEX - 6 a 7 dias")
+    const methodMatch = shippingMethod.match(/(\d+)\s*(?:a|–|-)\s*(\d+)\s*dias/i)
+      || shippingMethod.match(/(\d+)\s*dias/i);
+    if (methodMatch) {
+      const txt = methodMatch[2]
+        ? `${methodMatch[1]}–${methodMatch[2]} dias úteis`
+        : `${methodMatch[1]} dias úteis`;
+      prazoEntregaHtml = `<div class="dt-row"><span class="dt-k">Prazo estimado entrega</span><span class="dt-v gold">${txt}</span></div>`;
+    }
   }
 
   // Alerta prazo Hotprinti esgotado
@@ -836,7 +868,7 @@ function updateMetrics(orders) {
   const hojeCount = orders.filter(o => new Date(o.created_at).toDateString() === hoje).length;
   const fat       = filteredOrders.reduce((s, o) => s + parseFloat(o.total), 0);
   const lucroTotal= filteredOrders.reduce((s, o) => s + calcProfit(o).lucro, 0);
-  const pendentes = orders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
+  const pendentes = periodOrders.filter(o => !orderMeta[o.number]?.hotCode && o.payment_status === 'paid').length;
   const ticket    = filteredOrders.length ? fat / filteredOrders.length : 0;
   const margem    = fat > 0 ? (lucroTotal / fat * 100).toFixed(1) : 0;
 
