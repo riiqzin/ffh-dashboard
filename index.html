@@ -600,8 +600,9 @@ function renderOrder(order,index){
   const diasUtil=calcBusinessDays(order.created_at);
   const diasAteEnvio=shippedAt?calcBusinessDays(order.created_at,shippedAt):diasUtil;
 
-  const pct=Math.min(Math.round((diasUtil/8)*100),100);
-  const prazoColor=diasUtil>=8?'var(--coral)':diasUtil>=6?'var(--amber)':'var(--mint)';
+  const prazoConcluidoNoPrazo=!!meta.hotCode&&diasUtil<=8;
+  const pct=prazoConcluidoNoPrazo?100:Math.min(Math.round((diasUtil/8)*100),100);
+  const prazoColor=prazoConcluidoNoPrazo?'var(--mint)':diasUtil>=8?'var(--coral)':diasUtil>=6?'var(--amber)':'var(--mint)';
   const isAtrasado=!meta.hotCode&&order.payment_status==='paid'&&diasUtil>=3;
 
   const estMin=order.shipping_min_days??order.shipping_option_reference?.shipping_min_days??null;
@@ -700,7 +701,7 @@ function renderOrder(order,index){
         <div class="prazo-wrap">
           <div class="prazo-label">⏱ Prazo Hotprinti — 8 dias úteis</div>
           <div class="prazo-bar-bg"><div class="prazo-bar-fill" style="width:${pct}%;background:${prazoColor}"></div></div>
-          <div class="prazo-meta"><span>${diasUtil} / 8 dias úteis desde o pedido</span><span>${pct}%</span></div>
+          <div class="prazo-meta"><span>${prazoConcluidoNoPrazo?`Concluído em ${diasUtil} dias úteis ✓`:`${diasUtil} / 8 dias úteis desde o pedido`}</span><span>${pct}%</span></div>
         </div>
         <div class="tracking-wrap">
           <div class="tracking-label">🚚 Rastreio Correios</div>
