@@ -31,7 +31,6 @@ a{text-decoration:none;color:inherit;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--border3);}
 
-/* ── KEYFRAMES ── */
 @keyframes spin{to{transform:rotate(360deg);}}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fadeInLeft{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
@@ -48,7 +47,6 @@ a{text-decoration:none;color:inherit;}
 @keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
 @keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
-/* ── SIDEBAR ── */
 .sidebar{position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;padding-bottom:8px;animation:fadeInLeft .4s ease both;}
 .sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
 .sidebar-logo-mark{width:28px;height:28px;background:var(--gold-glow);border:1px solid var(--gold-ring);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:float 4s ease-in-out infinite;}
@@ -66,7 +64,6 @@ a{text-decoration:none;color:inherit;}
 .sidebar-footer{padding:12px 20px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;}
 .sidebar-footer-dot{width:5px;height:5px;border-radius:50%;background:var(--mint);animation:pulse-dot 2.5s ease-in-out infinite;}
 
-/* ── LAYOUT ── */
 .main{margin-left:var(--sidebar-w);min-height:100vh;}
 .topbar{position:sticky;top:0;height:var(--topbar-h);background:rgba(9,9,15,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;z-index:90;animation:fadeInUp .35s ease both;}
 .topbar-left{display:flex;flex-direction:column;gap:1px;}
@@ -81,12 +78,10 @@ a{text-decoration:none;color:inherit;}
 .btn-sync.spinning svg{animation:spin 1s linear infinite;}
 .ripple-el{position:absolute;border-radius:50%;background:rgba(212,175,106,.15);transform:scale(0);animation:rippleAnim .5s ease-out forwards;pointer-events:none;}
 
-/* ── CONTENT ── */
 .content{padding:28px;}
 .section-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
 
-/* ── METRICS ── */
 .metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:28px;}
 .metric-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 18px 16px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s;animation:fadeInUp .4s ease both;}
 .metric-card:nth-child(1){animation-delay:.05s;}.metric-card:nth-child(2){animation-delay:.1s;}.metric-card:nth-child(3){animation-delay:.15s;}.metric-card:nth-child(4){animation-delay:.2s;}.metric-card:nth-child(5){animation-delay:.25s;}
@@ -103,7 +98,6 @@ a{text-decoration:none;color:inherit;}
 .metric-value.loading{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;color:transparent !important;user-select:none;min-width:60px;display:inline-block;}
 .metric-sub{font-size:10.5px;color:var(--text3);margin-top:4px;font-variant-numeric:tabular-nums;}
 
-/* ── COLLECTIONS ── */
 .collections-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:28px;}
 .coll-chip{display:flex;align-items:center;gap:7px;padding:5px 12px;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;font-size:11.5px;color:var(--text2);font-weight:500;transition:all .2s,transform .15s;animation:scaleIn .4s ease both;}
 .coll-chip:nth-child(1){animation-delay:.1s;}.coll-chip:nth-child(2){animation-delay:.15s;}.coll-chip:nth-child(3){animation-delay:.2s;}.coll-chip:nth-child(4){animation-delay:.25s;}.coll-chip:nth-child(5){animation-delay:.3s;}.coll-chip:nth-child(6){animation-delay:.35s;}
@@ -111,7 +105,6 @@ a{text-decoration:none;color:inherit;}
 .coll-chip-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:var(--gold-glow);border:1px solid var(--gold-ring);border-radius:10px;font-size:10px;font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;transition:all .2s;}
 .coll-chip:hover .coll-chip-count{background:rgba(212,175,106,.25);transform:scale(1.1);}
 
-/* ── TOOLBAR ── */
 .orders-toolbar{margin-bottom:14px;}
 .orders-toolbar-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .orders-toolbar-bottom{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
@@ -132,7 +125,6 @@ a{text-decoration:none;color:inherit;}
 .date-input-styled:focus{border-color:var(--gold-dim);box-shadow:0 0 0 2px var(--gold-glow);}
 .toolbar-sep{width:1px;height:20px;background:var(--border);margin:0 2px;}
 
-/* ── ORDER CARD — 2 linhas ── */
 .order-card{position:relative;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:8px;overflow:hidden;transition:border-color .2s,box-shadow .25s,transform .2s;animation:cardIn .35s ease both;}
 .order-card:hover{border-color:var(--border2);box-shadow:0 6px 28px rgba(0,0,0,.35);transform:translateY(-1px);}
 .order-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border2);transition:background .25s,box-shadow .25s;}
@@ -142,7 +134,6 @@ a{text-decoration:none;color:inherit;}
 .order-card.atrasado{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.02);}
 .order-card.atrasado::before{background:var(--coral);box-shadow:2px 0 10px rgba(248,113,113,.4);}
 
-/* Header: 2 linhas */
 .order-header{padding:14px 18px 12px 22px;cursor:pointer;transition:background .15s;user-select:none;}
 .order-header:hover{background:rgba(255,255,255,.01);}
 .order-header-top{display:grid;grid-template-columns:130px 1fr 1fr auto 34px;align-items:center;gap:16px;margin-bottom:10px;}
@@ -158,7 +149,6 @@ a{text-decoration:none;color:inherit;}
 .o-value{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2;}
 .o-profit{font-size:11.5px;color:var(--mint);font-weight:600;font-variant-numeric:tabular-nums;margin-top:2px;}
 
-/* Chip HP inline no card */
 .hot-inline{display:inline-flex;align-items:center;gap:6px;padding:3px 8px 3px 10px;background:rgba(212,175,106,.08);border:1px solid var(--gold-ring);border-radius:20px;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.04em;transition:all .2s;}
 .hot-inline:hover{background:rgba(212,175,106,.15);}
 .hot-inline-label{font-size:9px;font-weight:700;color:var(--gold-dim);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0;}
@@ -167,7 +157,6 @@ a{text-decoration:none;color:inherit;}
 
 .days-chip{margin-left:auto;font-size:10.5px;color:var(--text3);white-space:nowrap;}
 
-/* ── STATUS PILLS ── */
 .status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;transition:all .2s;}
 .status-pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
 .sp-pending{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(251,191,36,.2);}
@@ -189,7 +178,6 @@ a{text-decoration:none;color:inherit;}
 .expand-btn:active{transform:scale(.95);}
 .expand-btn svg{width:12px;height:12px;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
 
-/* ── DETAIL PANEL ── */
 .order-detail{display:none;border-top:1px solid var(--border);background:var(--bg3);}
 .order-detail.open{display:block;animation:slideDown .3s cubic-bezier(.4,0,.2,1) both;}
 .detail-inner{padding:20px 22px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
@@ -199,9 +187,16 @@ a{text-decoration:none;color:inherit;}
 .dt-row:last-child{border-bottom:none;}
 .dt-row:hover{background:rgba(255,255,255,.02);}
 .dt-k{font-size:11.5px;color:var(--text3);flex-shrink:0;}
-.dt-v{font-size:11.5px;color:var(--text);text-align:right;max-width:58%;word-break:break-word;}
+.dt-v{font-size:11.5px;color:var(--text);text-align:right;max-width:58%;word-break:break-word;flex:1;}
 .dt-v.mint{color:var(--mint);font-weight:700;}.dt-v.coral{color:var(--coral);}.dt-v.gold{color:var(--gold);}
 .dt-v.big{font-size:16px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;}
+
+/* ── COPY FIELD BUTTON ── */
+.btn-copy-field{flex-shrink:0;margin-left:6px;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;border-radius:5px;border:none;background:transparent;color:var(--text3);opacity:.35;cursor:pointer;transition:color .15s,opacity .15s,background .15s,transform .15s;}
+.btn-copy-field:hover{color:var(--gold);opacity:1;background:var(--gold-glow);transform:scale(1.15);}
+.btn-copy-field.copied{color:var(--mint) !important;opacity:1 !important;}
+.btn-copy-field svg{width:11px;height:11px;pointer-events:none;}
+
 .product-box{background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:16px;transition:border-color .2s;}
 .product-box:hover{border-color:var(--border3);}
 .product-box-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
@@ -209,7 +204,6 @@ a{text-decoration:none;color:inherit;}
 .product-box-sub{font-size:11px;color:var(--text2);margin-top:3px;}
 .fin-total{margin-top:10px;padding-top:10px;border-top:1px solid var(--border2);}
 
-/* ── HOTPRINTI BOX ── */
 .hot-box{background:rgba(212,175,106,.05);border:1px solid var(--gold-ring);border-radius:var(--radius-md);padding:12px 14px;margin-bottom:14px;transition:all .2s;animation:borderFlash 3s ease-in-out infinite;}
 .hot-box:hover{background:rgba(212,175,106,.09);animation:none;border-color:var(--gold-dim);}
 .hot-box-label{font-size:9px;font-weight:700;color:var(--gold-dim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
@@ -228,8 +222,6 @@ a{text-decoration:none;color:inherit;}
 .btn-copy.copied{border-color:var(--mint-dim);color:var(--mint);animation:scaleIn .2s ease;}
 .btn-copy svg{width:10px;height:10px;}
 
-
-/* ── STEPS ── */
 .steps-track{display:flex;flex-direction:column;margin-bottom:16px;}
 .step-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;position:relative;opacity:.5;transition:opacity .3s;}
 .step-item.done{opacity:1;}
@@ -242,14 +234,12 @@ a{text-decoration:none;color:inherit;}
 .step-text{font-size:12px;color:var(--text3);padding-top:2px;transition:color .2s;}
 .step-item.done .step-text{color:var(--text2);}
 
-/* ── PRAZO BAR ── */
 .prazo-wrap{margin-bottom:16px;}
 .prazo-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .prazo-bar-bg{background:var(--bg5);border-radius:3px;height:4px;overflow:hidden;}
 .prazo-bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1);animation:barFill .8s cubic-bezier(.4,0,.2,1) both;animation-delay:.3s;}
 .prazo-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:5px;font-variant-numeric:tabular-nums;}
 
-/* ── TRACKING ── */
 .tracking-wrap{margin-bottom:14px;}
 .tracking-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .tracking-link{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--sky);transition:all .2s;}
@@ -258,19 +248,16 @@ a{text-decoration:none;color:inherit;}
 .tracking-link:hover svg{transform:translate(2px,-2px);}
 .tracking-empty{font-size:11.5px;color:var(--text3);}
 
-/* ── OBS ── */
 .obs-area{width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 10px;color:var(--text);font-size:12px;outline:none;resize:vertical;min-height:52px;font-family:inherit;transition:all .2s;}
 .obs-area:focus{border-color:var(--gold-dim);box-shadow:0 0 0 3px var(--gold-glow);}
 .obs-area::placeholder{color:var(--text3);}
 .obs-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;}
 
-/* ── ALERTS ── */
 .alert{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:var(--radius-md);font-size:12px;margin-bottom:10px;animation:fadeInUp .25s ease both;}
 .alert svg{width:13px;height:13px;flex-shrink:0;margin-top:1px;}
 .alert-warn{background:var(--amber-bg);border:1px solid rgba(251,191,36,.2);color:var(--amber);}
 .alert-err{background:var(--coral-bg);border:1px solid rgba(248,113,113,.2);color:var(--coral);}
 
-/* ── HISTORY ── */
 .history-box{background:var(--bg4);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;margin-top:10px;animation:fadeInUp .25s ease both;}
 .history-title{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
 .history-item{font-size:11px;color:var(--text3);padding:4px 0;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:7px;transition:color .2s;}
@@ -278,11 +265,9 @@ a{text-decoration:none;color:inherit;}
 .history-item:last-child{border-bottom:none;}
 .history-dot{width:4px;height:4px;border-radius:50%;background:var(--gold-dim);flex-shrink:0;margin-top:5px;}
 
-/* ── EMPTY STATE ── */
 .empty-state{text-align:center;padding:60px 20px;color:var(--text3);font-size:13px;animation:fadeInUp .4s ease both;}
 .empty-state svg{width:32px;height:32px;margin:0 auto 10px;display:block;opacity:.3;}
 
-/* ── CONFIG ── */
 .config-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:780px;}
 .config-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all .2s;animation:fadeInUp .4s ease both;}
 .config-card:nth-child(1){animation-delay:.05s;}.config-card:nth-child(2){animation-delay:.1s;}.config-card:nth-child(3){animation-delay:.15s;}.config-card:nth-child(4){animation-delay:.2s;}
@@ -292,12 +277,10 @@ a{text-decoration:none;color:inherit;}
 .api-status-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 0;}
 .api-dot{width:7px;height:7px;border-radius:50%;background:var(--mint);animation:pulse-dot 2s ease-in-out infinite;}
 
-/* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-md);padding:10px 16px;font-size:12px;color:var(--text);display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(16px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast-dot{width:6px;height:6px;border-radius:50%;background:var(--mint);flex-shrink:0;}
 
-/* ── UTILITIES ── */
 .text-gold{color:var(--gold);}.text-mint{color:var(--mint);}.text-coral{color:var(--coral);}.text-text2{color:var(--text2);}.text-text3{color:var(--text3);}
 .fw-700{font-weight:700;}.fw-800{font-weight:800;}.tabnum{font-variant-numeric:tabular-nums;}
 </style>
@@ -451,6 +434,25 @@ function animateMetric(el,val){
   el.textContent=val;el.classList.add('updated');
 }
 
+/* Copy field inline */
+const COPY_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+const CHECK_SVG=`<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 6l3 3 5-5"/></svg>`;
+
+function copyField(value,btn){
+  if(!value||value==='—')return;
+  navigator.clipboard.writeText(value).then(()=>{
+    btn.innerHTML=CHECK_SVG;
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=COPY_SVG;},1000);
+  });
+}
+
+function cpBtn(val){
+  const safe=(val||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  if(!safe||safe==='—')return`<button class="btn-copy-field" style="opacity:.15;cursor:default" disabled title="Sem valor">${COPY_SVG}</button>`;
+  return`<button class="btn-copy-field" onclick="event.stopPropagation();copyField('${safe}',this)" title="Copiar">${COPY_SVG}</button>`;
+}
+
 /* Período */
 function todayStr(){return new Date().toISOString().slice(0,10);}
 function setPreset(preset,btn){
@@ -560,7 +562,7 @@ function paymentStatusPill(order){
 }
 function checkmark(){return`<svg viewBox="0 0 12 12" fill="none" width="9" height="9"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2"/></svg>`;}
 
-/* Dias úteis — endIso opcional, default = hoje */
+/* Dias úteis */
 function calcBusinessDays(startIso,endIso){
   let d=new Date(startIso);const end=endIso?new Date(endIso):new Date();let util=0;
   while(d<end){if(d.getDay()!==0&&d.getDay()!==6)util++;d.setDate(d.getDate()+1);}
@@ -573,7 +575,7 @@ function hotInlineChip(id,code){
     <span class="hot-inline-label">HP</span>
     ${code}
     <button class="btn-copy" id="copy-inline-${id}" onclick="event.stopPropagation();copyCode('inline-${id}','${code}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
       Copiar
     </button>
   </span>`;
@@ -585,6 +587,7 @@ function renderOrder(order,index){
   const status=getOrderStatus(order,meta);
   const customer=order.customer;
   const name=customer?(customer.name||((customer.first_name||'')+' '+(customer.last_name||'')).trim()):'Cliente';
+  const cpf=customer?.identification||'';
   const city=order.shipping_address?.city||'',state=order.shipping_address?.province||'';
   const product=order.products?.[0];
   const coll=getCollection(order);
@@ -596,7 +599,6 @@ function renderOrder(order,index){
   const shippingMethod=order.shipping_carrier_name||order.shipping_option||'—';
   const shippingCost=parseFloat(order.shipping_cost_customer||0);
 
-  /* Dias úteis */
   const shippedAt=order.shipped_at||(order.fulfillments?.[0]?.shipped_at)||null;
   const diasUtil=calcBusinessDays(order.created_at);
   const diasAteEnvio=shippedAt?calcBusinessDays(order.created_at,shippedAt):diasUtil;
@@ -631,6 +633,9 @@ function renderOrder(order,index){
   const daysText=diasUtil>=8
     ?`<span class="days-chip" style="color:var(--coral)">${diasUtil}d úteis ⚠</span>`
     :`<span class="days-chip">${diasUtil}d úteis</span>`;
+
+  /* ── Monta endereço completo para copiar ── */
+  const addrFull=(order.shipping_address?.address||'')+(order.shipping_address?.number?', '+order.shipping_address.number:'')+(order.shipping_address?.floor?' '+order.shipping_address.floor:'');
 
   return`<div class="order-card${isAtrasado?' atrasado':''}" data-status="${status}" data-num="${order.number}" data-name="${name.toLowerCase()}" id="oc-${id}" style="animation-delay:${delay}s">
   <div class="order-header" onclick="toggleOrder('od-${id}','cb-${id}')">
@@ -670,12 +675,13 @@ function renderOrder(order,index){
         <div class="product-box"><div class="product-box-label">📦 Produto</div><div class="product-box-name">${collLabel}</div><div class="product-box-sub">${typeLabel}${variant?' · '+variant:''}</div></div>
         <div class="dt-heading"><span>👤</span> Cliente &amp; entrega</div>
         <div class="dt-table">
-          <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span></div>
-          <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email||'—'}</span></div>
-          <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone||'—'}</span></div>
-          <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${(order.shipping_address?.address||'—')+(order.shipping_address?.number?', '+order.shipping_address.number:'')+(order.shipping_address?.floor?' '+order.shipping_address.floor:'')}</span></div>
+          <div class="dt-row"><span class="dt-k">Nome</span><span class="dt-v">${name}</span>${cpBtn(name)}</div>
+          <div class="dt-row"><span class="dt-k">CPF</span><span class="dt-v tabnum">${cpf||'—'}</span>${cpBtn(cpf)}</div>
+          <div class="dt-row"><span class="dt-k">Email</span><span class="dt-v">${customer?.email||'—'}</span>${cpBtn(customer?.email||'')}</div>
+          <div class="dt-row"><span class="dt-k">Telefone</span><span class="dt-v">${customer?.phone||'—'}</span>${cpBtn(customer?.phone||'')}</div>
+          <div class="dt-row"><span class="dt-k">Endereço</span><span class="dt-v">${addrFull||'—'}</span>${cpBtn(addrFull)}</div>
           <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state?', '+state:''}</span></div>
-          <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum">${order.shipping_address?.zipcode||'—'}</span></div>
+          <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum">${order.shipping_address?.zipcode||'—'}</span>${cpBtn(order.shipping_address?.zipcode||'')}</div>
           <div class="dt-row"><span class="dt-k">Frete</span><span class="dt-v">${shippingMethod}</span></div>
           <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost>0?fmtBRL(shippingCost):'Grátis'}</span></div>
           ${prazoEntregaRow}
