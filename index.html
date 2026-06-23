@@ -283,6 +283,149 @@ a{text-decoration:none;color:inherit;}
 
 .text-gold{color:var(--gold);}.text-mint{color:var(--mint);}.text-coral{color:var(--coral);}.text-text2{color:var(--text2);}.text-text3{color:var(--text3);}
 .fw-700{font-weight:700;}.fw-800{font-weight:800;}.tabnum{font-variant-numeric:tabular-nums;}
+
+/* Mobile customer name row — hidden on desktop */
+.order-header-mobile-name{display:none;}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .order-header-mobile-name{
+    display:flex;align-items:baseline;gap:8px;
+    font-size:12.5px;font-weight:600;color:var(--text);
+    padding:0 14px 8px 18px;
+  }
+  .order-header-mobile-loc{font-size:10.5px;color:var(--text3);font-weight:400;}
+
+  /* Sidebar vira bottom nav */
+  .sidebar{
+    top:auto;left:0;right:0;bottom:0;width:100%;height:60px;
+    flex-direction:row;align-items:center;
+    border-right:none;border-top:1px solid var(--border);
+    padding:0;animation:none;z-index:200;
+  }
+  .sidebar-logo{display:none;}
+  .sidebar-nav{
+    flex:1;display:flex;flex-direction:row;align-items:center;
+    justify-content:space-around;padding:0;overflow:visible;
+  }
+  .nav-section-label{display:none;}
+  .nav-item{
+    flex-direction:column;gap:3px;padding:6px 12px;
+    font-size:9px;letter-spacing:.04em;text-align:center;
+    border-radius:var(--radius-sm);margin-bottom:0;
+    min-width:64px;
+  }
+  .nav-item svg{width:18px;height:18px;}
+  .nav-item.active::before{
+    left:50%;top:auto;bottom:0;
+    width:24px;height:2.5px;
+    transform:translateX(-50%);
+    margin-left:0;
+    border-radius:2px 2px 0 0;
+  }
+  .sidebar-footer{display:none;}
+
+  /* Main layout */
+  .main{margin-left:0;padding-bottom:68px;}
+  .topbar{padding:0 16px;height:50px;}
+  .topbar-eyebrow{display:none;}
+  .topbar-title{font-size:13px;}
+  .sync-status{display:none;}
+  .btn-sync span{display:none;}
+  .btn-sync{padding:7px 10px;min-width:36px;justify-content:center;}
+
+  /* Content */
+  .content{padding:16px 14px;}
+  .section-label{font-size:8.5px;margin-bottom:10px;}
+
+  /* Metrics: 2x3 em vez de 1x5 */
+  .metrics-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;margin-bottom:20px;
+  }
+  /* Último card (ticket médio) ocupa linha inteira */
+  .metrics-grid .metric-card:last-child{grid-column:1/-1;}
+  .metric-card{padding:14px 14px 12px;}
+  .metric-icon{width:24px;height:24px;margin-bottom:8px;font-size:12px;}
+  .metric-value{font-size:20px;}
+  .metric-label{font-size:9px;}
+
+  /* Collections chips: scroll horizontal */
+  .collections-row{
+    flex-wrap:nowrap;overflow-x:auto;
+    padding-bottom:6px;margin-bottom:18px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .collections-row::-webkit-scrollbar{display:none;}
+  .coll-chip{flex-shrink:0;font-size:11px;padding:4px 10px;}
+
+  /* Toolbar */
+  .orders-toolbar-top{flex-direction:column;align-items:stretch;gap:8px;}
+  .search-wrap{width:100%;}
+  .orders-toolbar-bottom{gap:6px;}
+  .toolbar-group{flex:1;justify-content:space-around;}
+  .pill-btn{flex:1;text-align:center;padding:5px 6px;font-size:10.5px;}
+  .date-range{display:none;} /* esconde range de datas no mobile — presets cobrem */
+  .toolbar-sep{display:none;}
+
+  /* Order card header: empilha em 2 linhas */
+  .order-header{padding:12px 14px 10px 18px;}
+  .order-header-top{
+    grid-template-columns:1fr auto 28px;
+    grid-template-rows:auto auto;
+    gap:8px 10px;
+  }
+  /* Linha 1: número+data | valor | expand */
+  .order-header-top > div:nth-child(1){grid-column:1;grid-row:1;}
+  .order-header-top > div:nth-child(2){display:none;} /* cliente some do header — está no detalhe */
+  .order-header-top > div:nth-child(3){grid-column:1;grid-row:2;}
+  .order-header-top .o-value-wrap{grid-column:2;grid-row:1;text-align:right;}
+  .order-header-top .expand-btn{grid-column:3;grid-row:1;}
+
+  /* Mostra cliente abaixo do número no mobile */
+  .o-num{font-size:13px;}
+  .o-date{font-size:10px;}
+  .o-collection{font-size:12px;}
+  .o-value{font-size:15px;}
+  .o-profit{font-size:11px;}
+
+  /* Pills no header bottom: scroll horizontal */
+  .order-header-bottom{
+    flex-wrap:nowrap;overflow-x:auto;
+    padding-bottom:2px;gap:5px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .order-header-bottom::-webkit-scrollbar{display:none;}
+  .days-chip{margin-left:0;flex-shrink:0;}
+
+  /* Detail: coluna única */
+  .detail-inner{
+    grid-template-columns:1fr;
+    gap:20px;
+    padding:16px 14px;
+  }
+
+  /* Toast: full width bottom */
+  .toast{
+    left:14px;right:14px;bottom:72px;
+    width:auto;
+  }
+
+  /* Config grid: 1 coluna */
+  .config-grid{grid-template-columns:1fr;max-width:100%;}
+}
+
+/* Tablets intermediários */
+@media(min-width:769px) and (max-width:1024px){
+  :root{--sidebar-w:180px;}
+  .metrics-grid{grid-template-columns:repeat(3,1fr);}
+  .metrics-grid .metric-card:nth-child(4),
+  .metrics-grid .metric-card:nth-child(5){grid-column:span 1;}
+  .detail-inner{grid-template-columns:1fr 1fr;}
+  .content{padding:20px;}
+}
 </style>
 </head>
 <body>
@@ -660,6 +803,7 @@ function renderOrder(order,index){
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
     </div>
+    <div class="order-header-mobile-name">${name}<span class="order-header-mobile-loc">${city}${state?', '+state:''}</span></div>
     <div class="order-header-bottom">
       ${paymentStatusPill(order)}
       ${statusPill(status)}
