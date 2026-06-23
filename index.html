@@ -568,18 +568,43 @@ async function sbUpsert(orderId,fields){
 async function loadAllMeta(){
   try{
     const r=await fetch(`${SB_URL}/rest/v1/order_meta?select=*`,{headers:SB_HEADERS});
+    if(!r.ok){console.warn('Supabase loadAllMeta HTTP',r.status);return;}
     const rows=await r.json();
-    if(Array.isArray(rows)){
+    if(Array.isArray(rows)&&rows.length>0){
       rows.forEach(row=>{
-        orderMeta[row.order_id]={
+        orderMeta[String(row.order_id)]={
           hotCode:row.hot_code||'',
           obs:row.obs||'',
           history:Array.isArray(row.history)?row.history:[]
         };
       });
       localStorage.setItem('ffh-order-meta',JSON.stringify(orderMeta));
+      console.log('[FFH] Supabase meta loaded:',rows.length,'rows');
+    } else {
+      console.log('[FFH] Supabase: no rows found, checking if migration needed');
+      await migrateLocalToSupabase();
     }
   }catch(e){console.warn('Supabase loadAllMeta failed',e);}
+}
+
+/* Migra dados existentes do localStorage pro Supabase (roda só uma vez) */
+async function migrateLocalToSupabase(){
+  const local=JSON.parse(localStorage.getItem('ffh-order-meta')||'{}');
+  const keys=Object.keys(local);
+  if(!keys.length){console.log('[FFH] Nothing to migrate');return;}
+  console.log('[FFH] Migrating',keys.length,'entries to Supabase...');
+  for(const orderId of keys){
+    const m=local[orderId];
+    if(m.hotCode||m.obs){
+      await sbUpsert(orderId,{
+        hot_code:m.hotCode||'',
+        obs:m.obs||'',
+        history:m.history||[]
+      });
+    }
+  }
+  console.log('[FFH] Migration done');
+  showToast('Dados sincronizados com Supabase ✓',3000);
 }
 
 /* orderMeta — inicia do localStorage como cache, Supabase é a fonte de verdade */
