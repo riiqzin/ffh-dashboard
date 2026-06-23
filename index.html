@@ -549,9 +549,46 @@ a{text-decoration:none;color:inherit;}
 
 <script>
 const COSTS={'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
+
+/* ── SUPABASE ── */
+const SB_URL='https://gmdcolbxveabwzpzxcpk.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtZGNvbGJ4dmVhYnd6cHp4Y3BrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NDI0OTIsImV4cCI6MjA5NjQxODQ5Mn0.p9lyfjOIMHzTVS3X9RmUdxaMgU3Xw4-mywTWDLpPuY0';
+const SB_HEADERS={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+async function sbUpsert(orderId,fields){
+  try{
+    await fetch(`${SB_URL}/rest/v1/order_meta`,{
+      method:'POST',
+      headers:{...SB_HEADERS,'Prefer':'resolution=merge-duplicates'},
+      body:JSON.stringify({order_id:String(orderId),...fields,updated_at:new Date().toISOString()})
+    });
+  }catch(e){console.warn('Supabase upsert failed',e);}
+}
+
+async function loadAllMeta(){
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/order_meta?select=*`,{headers:SB_HEADERS});
+    const rows=await r.json();
+    if(Array.isArray(rows)){
+      rows.forEach(row=>{
+        orderMeta[row.order_id]={
+          hotCode:row.hot_code||'',
+          obs:row.obs||'',
+          history:Array.isArray(row.history)?row.history:[]
+        };
+      });
+      localStorage.setItem('ffh-order-meta',JSON.stringify(orderMeta));
+    }
+  }catch(e){console.warn('Supabase loadAllMeta failed',e);}
+}
+
+/* orderMeta — inicia do localStorage como cache, Supabase é a fonte de verdade */
 const orderMeta=JSON.parse(localStorage.getItem('ffh-order-meta')||'{}');
 let currentStatusFilter='todos', allOrders=[], activePeriodPreset='30';
-function saveMeta(){localStorage.setItem('ffh-order-meta',JSON.stringify(orderMeta));}
+
+function saveMeta(){
+  localStorage.setItem('ffh-order-meta',JSON.stringify(orderMeta));
+}
 
 /* Toast */
 let toastTimer;
@@ -881,6 +918,7 @@ function saveHotprinti(id){
   const code=input.value.trim();if(!code)return;
   orderMeta[id]=orderMeta[id]||{};orderMeta[id].hotCode=code;
   pushHistory(id,`Código Hotprinti salvo: ${code}`);saveMeta();
+  sbUpsert(id,{hot_code:code,obs:orderMeta[id].obs||'',history:orderMeta[id].history||[]});
   showToast('✓ Código Hotprinti salvo!');
   const hotBox=document.getElementById('hotbox-'+id);
   if(hotBox){
@@ -911,6 +949,7 @@ function saveObs(id){
   orderMeta[id]=orderMeta[id]||{};orderMeta[id].obs=obs;
   const preview=obs.length>30?obs.slice(0,30)+'…':obs;
   pushHistory(id,`Observação salva: "${preview}"`);saveMeta();
+  sbUpsert(id,{hot_code:orderMeta[id].hotCode||'',obs:obs,history:orderMeta[id].history||[]});
   showToast('Observação salva');
   const dc3=document.querySelector(`#od-${id} .detail-inner > div:last-child`);
   if(dc3){const ex=dc3.querySelector('.history-box');if(ex)ex.outerHTML=renderHistory(id);else dc3.insertAdjacentHTML('beforeend',renderHistory(id));}
@@ -998,6 +1037,7 @@ async function loadOrders(){
     const orders=await res.json();
     if(!Array.isArray(orders))throw new Error('Resposta inválida');
     allOrders=orders;
+    await loadAllMeta();
     ['m-hoje','m-fat','m-lucro','m-pendentes','m-ticket'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('loading');});
     const dot=document.getElementById('api-dot'),txt=document.getElementById('api-status-text');
     if(dot)dot.style.background='var(--mint)';if(txt)txt.textContent='● Conectado';
