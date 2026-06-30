@@ -156,6 +156,8 @@ a{text-decoration:none;color:inherit;}
 .hot-inline .btn-copy:hover{color:var(--gold);border-color:var(--gold);}
 
 .days-chip{margin-left:auto;font-size:10.5px;color:var(--text3);white-space:nowrap;}
+.prod-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);color:var(--violet);}
+.sent-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;background:var(--mint-bg);border:1px solid rgba(110,231,183,.3);color:var(--mint);letter-spacing:.01em;}
 
 .status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap;transition:all .2s;}
 .status-pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
@@ -577,6 +579,7 @@ async function loadAllMeta(){
       rows.forEach(row=>{
         orderMeta[String(row.order_id)]={
           hotCode:row.hot_code||'',
+          hotCodeSavedAt:row.hot_code_saved_at||'',
           obs:row.obs||'',
           history:Array.isArray(row.history)?row.history:[]
         };
@@ -842,6 +845,19 @@ function renderOrder(order,index){
     ?`<span class="days-chip" style="color:var(--coral)">${diasUtil}d úteis ⚠</span>`
     :`<span class="days-chip">${diasUtil}d úteis</span>`;
 
+  /* Produção real */
+  const prodSavedAt=meta.hotCodeSavedAt||'';
+  let prodChip='', sentBadge='';
+  if(trackingCode&&prodSavedAt){
+    const diasProd=calcBusinessDays(prodSavedAt,shippedAt||new Date().toISOString());
+    sentBadge=`<span class="sent-badge">✅ Produzido e enviado em ${diasProd}d úteis</span>`;
+  } else if(trackingCode&&!prodSavedAt){
+    sentBadge=`<span class="sent-badge">✅ Produzido e enviado</span>`;
+  } else if(meta.hotCode&&prodSavedAt){
+    const diasProd=calcBusinessDays(prodSavedAt);
+    prodChip=`<span class="prod-chip">🏭 ${diasProd}d em produção real</span>`;
+  }
+
   /* ── Monta endereço completo para copiar ── */
   const addrFull=(order.shipping_address?.address||'')+(order.shipping_address?.number?', '+order.shipping_address.number:'')+(order.shipping_address?.floor?' '+order.shipping_address.floor:'');
 
@@ -875,7 +891,7 @@ function renderOrder(order,index){
       ${paymentPill(order)}
       ${meta.hotCode?hotInlineChip(id,meta.hotCode):''}
       ${trackingCode?`<span class="status-pill sp-blue" style="font-size:10px;letter-spacing:.03em">${trackingCode}</span>`:''}
-      ${daysText}
+      ${sentBadge||prodChip||daysText}
     </div>
   </div>
   <div class="order-detail" id="od-${id}">
@@ -945,8 +961,9 @@ function saveHotprinti(id){
   const input=document.getElementById('hot-'+id);if(!input)return;
   const code=input.value.trim();if(!code)return;
   orderMeta[id]=orderMeta[id]||{};orderMeta[id].hotCode=code;
+  if(!orderMeta[id].hotCodeSavedAt)orderMeta[id].hotCodeSavedAt=new Date().toISOString();
   pushHistory(id,`Código Hotprinti salvo: ${code}`);saveMeta();
-  sbUpsert(id,{hot_code:code,obs:orderMeta[id].obs||'',history:orderMeta[id].history||[]});
+  sbUpsert(id,{hot_code:code,hot_code_saved_at:orderMeta[id].hotCodeSavedAt,obs:orderMeta[id].obs||'',history:orderMeta[id].history||[]});
   showToast('✓ Código Hotprinti salvo!');
   const hotBox=document.getElementById('hotbox-'+id);
   if(hotBox){
@@ -961,8 +978,10 @@ function saveHotprinti(id){
         const existingHot=headerBottom.querySelector('.hot-inline');
         if(!existingHot){
           const daysChip=headerBottom.querySelector('.days-chip');
-          if(daysChip)daysChip.insertAdjacentHTML('beforebegin',hotInlineChip(id,code));
-          else headerBottom.insertAdjacentHTML('beforeend',hotInlineChip(id,code));
+          const diasProd=calcBusinessDays(orderMeta[id].hotCodeSavedAt||new Date().toISOString());
+          const newProdChip=`<span class="prod-chip">🏭 ${diasProd}d em produção real</span>`;
+          if(daysChip)daysChip.outerHTML=newProdChip+hotInlineChip(id,code);
+          else headerBottom.insertAdjacentHTML('beforeend',hotInlineChip(id,code)+newProdChip);
         }
       }
     }
