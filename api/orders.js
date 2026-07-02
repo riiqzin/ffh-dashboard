@@ -1,10 +1,16 @@
-const STORE_ID = process.env.NUVEMSHOP_STORE_ID || '5191961';
-const TOKEN = process.env.NUVEMSHOP_TOKEN || '05fce3e924caa8a1447f6387fda922c31e8f00a0';
+const STORE_ID = process.env.NUVEMSHOP_STORE_ID;
+const TOKEN = process.env.NUVEMSHOP_TOKEN;
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (!STORE_ID || !TOKEN) {
+    return res.status(500).json({
+      error: 'Configuração ausente: defina NUVEMSHOP_STORE_ID e NUVEMSHOP_TOKEN nas Environment Variables do projeto na Vercel.'
+    });
+  }
 
   try {
     const { per_page = 50, page = 1 } = req.query;
