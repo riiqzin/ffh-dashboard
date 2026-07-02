@@ -543,9 +543,10 @@ a{text-decoration:none;color:inherit;}
     <div id="tab-config" style="display:none">
       <div class="section-label">Configurações de custo &amp; API</div>
       <div class="config-grid">
-        <div class="config-card"><div class="config-card-header">Custos de produção — Hotprinti</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Tradicional · Frente</span><span class="dt-v gold">R$ 46,70</span></div><div class="dt-row"><span class="dt-k">Tradicional · Costas</span><span class="dt-v gold">R$ 48,20</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy · Frente</span><span class="dt-v gold">R$ 86,70</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy · Costas</span><span class="dt-v gold">R$ 88,20</span></div></div></div>
+        <div class="config-card"><div class="config-card-header">Custos de produção — Hotprinti</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Tradicional · Frente</span><span class="dt-v gold">R$ 46,70</span></div><div class="dt-row"><span class="dt-k">Tradicional · Costas</span><span class="dt-v gold">R$ 48,20</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy · Frente</span><span class="dt-v gold">R$ 86,70</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy · Costas</span><span class="dt-v gold">R$ 88,20</span></div><div class="dt-row"><span class="dt-k">Moletom</span><span class="dt-v gold">R$ 101,20</span></div></div></div>
         <div class="config-card"><div class="config-card-header">Taxas Nuvemshop</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Cartão de crédito</span><span class="dt-v">3,69% + R$ 0,35</span></div><div class="dt-row"><span class="dt-k">Pix</span><span class="dt-v">0,99%</span></div><div class="dt-row"><span class="dt-k">Desconto Pix ao cliente</span><span class="dt-v">5%</span></div></div></div>
-        <div class="config-card"><div class="config-card-header">Preços de venda</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Tradicional</span><span class="dt-v gold">R$ 99,90</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy</span><span class="dt-v gold">R$ 165,00</span></div></div></div>
+        <div class="config-card"><div class="config-card-header">Preços de venda</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Tradicional</span><span class="dt-v gold">R$ 99,90</span></div><div class="dt-row"><span class="dt-k">Oversized Boxy</span><span class="dt-v gold">R$ 165,00</span></div><div class="dt-row"><span class="dt-k">Moletom</span><span class="dt-v gold">R$ 199,90</span></div></div></div>
+        <div class="config-card"><div class="config-card-header">Frete grátis</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Limiar de ativação</span><span class="dt-v gold">R$ 199,90</span></div><div class="dt-row"><span class="dt-k">Como funciona</span><span class="dt-v" style="max-width:70%">Pedidos ≥ R$ 199,90 não cobram frete do cliente. Informe o custo real pago em cada pedido (campo aparece automaticamente no card) pra o lucro ficar correto.</span></div></div></div>
         <div class="config-card"><div class="config-card-header">Conexão API Nuvemshop</div><div class="config-card-body"><div class="dt-row"><span class="dt-k">Store ID</span><span class="dt-v gold tabnum">5191961</span></div><div class="dt-row"><span class="dt-k">App ID</span><span class="dt-v tabnum">16103</span></div><div class="api-status-row"><div class="api-dot" id="api-dot"></div><span class="dt-k" id="api-status-text">Verificando conexão…</span></div></div></div>
       </div>
     </div>
@@ -553,7 +554,8 @@ a{text-decoration:none;color:inherit;}
 </main>
 
 <script>
-const COSTS={'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20};
+const COSTS={'tradicional-frente':46.70,'tradicional-costas':48.20,'boxy-frente':86.70,'boxy-costas':88.20,'moletom':101.20};
+const FREE_SHIPPING_THRESHOLD=199.90;
 
 /* ── SUPABASE ── */
 const SB_URL='https://gmdcolbxveabwzpzxcpk.supabase.co';
@@ -581,6 +583,7 @@ async function loadAllMeta(){
           hotCode:row.hot_code||'',
           hotCodeSavedAt:row.hot_code_saved_at||'',
           obs:row.obs||'',
+          freteReal:row.frete_real!=null?String(row.frete_real):'',
           history:Array.isArray(row.history)?row.history:[]
         };
       });
@@ -601,10 +604,11 @@ async function migrateLocalToSupabase(){
   console.log('[FFH] Migrating',keys.length,'entries to Supabase...');
   for(const orderId of keys){
     const m=local[orderId];
-    if(m.hotCode||m.obs){
+    if(m.hotCode||m.obs||m.freteReal){
       await sbUpsert(orderId,{
         hot_code:m.hotCode||'',
         obs:m.obs||'',
+        frete_real:m.freteReal?parseFloat(m.freteReal):null,
         history:m.history||[]
       });
     }
@@ -705,7 +709,8 @@ function renderHistory(id){
 }
 
 /* Lucro */
-function calcProfit(order){
+function calcProfit(order,meta){
+  meta=meta||{};
   const total=parseFloat(order.total);
   const method=(order.payment_details?.method||'').toLowerCase();
   const isPix=method.includes('pix');
@@ -715,12 +720,26 @@ function calcProfit(order){
   const product=order.products?.[0];
   const name=(product?.name?.pt||product?.name?.['pt-BR']||(typeof product?.name==='string'?product.name:'')||'').toLowerCase();
   const variant=(product?.variant_values?.[0]||'').toLowerCase();
-  const isBoxy=name.includes('boxy')||name.includes('oversized');
-  const isCostas=name.includes('costas')||variant.includes('costas');
-  const custo=isBoxy&&isCostas?88.20:isBoxy?86.70:isCostas?48.20:46.70;
-  const lucro=valorLiq-custo;
+  const isMoletom=name.includes('moletom')||name.includes('hoodie')||name.includes('blusa de frio')||name.includes('casaco');
+  const isBoxy=!isMoletom&&(name.includes('boxy')||name.includes('oversized'));
+  const isCostas=!isMoletom&&(name.includes('costas')||variant.includes('costas'));
+  const custo=isMoletom?COSTS.moletom:(isBoxy&&isCostas?88.20:isBoxy?86.70:isCostas?48.20:46.70);
+
+  /* Frete grátis: pedidos que bateram o limiar não cobram frete do cliente,
+     mas o custo real (Correios/transportadora) ainda sai do bolso.
+     1º tentamos pegar automático da Nuvemshop (shipping_cost_owner — só vem preenchido
+     se você usa transportadora integrada, tipo Melhor Envio). Se vier zerado, cai no
+     valor que você registrou manualmente no pedido. */
+  const shippingCostCustomer=parseFloat(order.shipping_cost_customer||0);
+  const shippingCostOwnerApi=parseFloat(order.shipping_cost_owner||0);
+  const isFreeShipping=shippingCostCustomer<=0&&total>=FREE_SHIPPING_THRESHOLD;
+  const freteAutomatico=shippingCostOwnerApi>0;
+  const freteReal=freteAutomatico?shippingCostOwnerApi:(meta.freteReal?parseFloat(meta.freteReal):0);
+  const freteDescontado=isFreeShipping?freteReal:0;
+
+  const lucro=valorLiq-custo-freteDescontado;
   const margem=(lucro/total*100).toFixed(1);
-  return{lucro,margem,custo,isPix,taxa,isBoxy,isCostas};
+  return{lucro,margem,custo,isPix,taxa,isBoxy,isCostas,isMoletom,isFreeShipping,freteReal,freteDescontado,freteAutomatico};
 }
 function fmtBRL(v){return'R$ '+Math.abs(v).toFixed(2).replace('.',',');}
 function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString('pt-BR')+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'h';}
@@ -794,7 +813,7 @@ function hotInlineChip(id,code){
 
 /* Render card */
 function renderOrder(order,index){
-  const id=order.number,meta=orderMeta[id]||{},fin=calcProfit(order);
+  const id=order.number,meta=orderMeta[id]||{},fin=calcProfit(order,meta);
   const status=getOrderStatus(order,meta);
   const customer=order.customer;
   const name=customer?(customer.name||((customer.first_name||'')+' '+(customer.last_name||'')).trim()):'Cliente';
@@ -804,7 +823,7 @@ function renderOrder(order,index){
   const coll=getCollection(order);
   const collLabel=coll?coll.label:(getProductName(product)||'Produto');
   const variant=product?.variant_values?.join(' · ')||'';
-  const typeLabel=(fin.isBoxy?'Oversized Boxy':'Tradicional')+(fin.isCostas?' · Costas':' · Frente');
+  const typeLabel=fin.isMoletom?'Moletom':(fin.isBoxy?'Oversized Boxy':'Tradicional')+(fin.isCostas?' · Costas':' · Frente');
   const trackingCode=order.tracking_number||order.tracking_code||order.shipping_tracking_number||(order.fulfillments?.[0]?.tracking_number)||'';
   const trackingUrl=trackingCode?'https://rastreamento.correios.com.br/app/index.php?objetos='+trackingCode:'';
   const shippingMethod=order.shipping_carrier_name||order.shipping_option||'—';
@@ -878,7 +897,7 @@ function renderOrder(order,index){
       </div>
       <div class="o-value-wrap">
         <div class="o-value">${fmtBRL(parseFloat(order.total))}</div>
-        <div class="o-profit">+${fmtBRL(fin.lucro)}</div>
+        <div class="o-profit" id="o-profit-${id}">+${fmtBRL(fin.lucro)}</div>
       </div>
       <button class="expand-btn" id="cb-${id}" onclick="event.stopPropagation();toggleOrder('od-${id}','cb-${id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -908,7 +927,7 @@ function renderOrder(order,index){
           <div class="dt-row"><span class="dt-k">Cidade/UF</span><span class="dt-v">${city}${state?', '+state:''}</span></div>
           <div class="dt-row"><span class="dt-k">CEP</span><span class="dt-v tabnum">${order.shipping_address?.zipcode||'—'}</span>${cpBtn(order.shipping_address?.zipcode||'')}</div>
           <div class="dt-row"><span class="dt-k">Frete</span><span class="dt-v">${shippingMethod}</span></div>
-          <div class="dt-row"><span class="dt-k">Frete pago</span><span class="dt-v">${shippingCost>0?fmtBRL(shippingCost):'Grátis'}</span></div>
+          <div class="dt-row"><span class="dt-k">Frete pago (cliente)</span><span class="dt-v">${shippingCost>0?fmtBRL(shippingCost):(fin.isFreeShipping?'Grátis (acima de '+fmtBRL(FREE_SHIPPING_THRESHOLD)+')':'Grátis')}</span></div>
           ${prazoEntregaRow}
           <div class="dt-row"><span class="dt-k">Pagamento</span><span class="dt-v">${paymentPill(order)}</span></div>
         </div>
@@ -919,13 +938,15 @@ function renderOrder(order,index){
           <div class="dt-row"><span class="dt-k">Valor bruto</span><span class="dt-v tabnum">${fmtBRL(parseFloat(order.total))}</span></div>
           ${fin.isPix?`<div class="dt-row"><span class="dt-k">Desconto Pix (5%)</span><span class="dt-v coral tabnum">− ${fmtBRL(parseFloat(order.total)*.05)}</span></div>`:''}
           <div class="dt-row"><span class="dt-k">Taxa gateway</span><span class="dt-v coral tabnum">− ${fmtBRL(fin.taxa)}</span></div>
-          <div class="dt-row"><span class="dt-k">Custo Hotprinti</span><span class="dt-v coral tabnum">− ${fmtBRL(fin.custo)}</span></div>
+          <div class="dt-row"><span class="dt-k">Custo produto</span><span class="dt-v coral tabnum">− ${fmtBRL(fin.custo)}</span></div>
+          <div class="dt-row" id="frete-row-${id}" style="${fin.isFreeShipping?'':'display:none'}"><span class="dt-k">Frete real ${fin.freteAutomatico?'(Nuvemshop)':'(você pagou)'}</span><span class="dt-v coral tabnum" id="frete-val-${id}">− ${fmtBRL(fin.freteDescontado)}</span></div>
           <div class="dt-row"><span class="dt-k">Tipo produto</span><span class="dt-v">${typeLabel}</span></div>
         </div>
         <div class="fin-total">
-          <div class="dt-row"><span class="dt-k fw-700" style="color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v mint big">+ ${fmtBRL(fin.lucro)}</span></div>
-          <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v mint">${fin.margem}%</span></div>
+          <div class="dt-row"><span class="dt-k fw-700" style="color:var(--text);font-size:13px">Lucro líquido</span><span class="dt-v mint big" id="lucro-val-${id}">+ ${fmtBRL(fin.lucro)}</span></div>
+          <div class="dt-row"><span class="dt-k">Margem</span><span class="dt-v mint" id="margem-val-${id}">${fin.margem}%</span></div>
         </div>
+        ${fin.isFreeShipping&&!fin.freteAutomatico?`<div class="hot-box" id="fretebox-${id}" style="margin-top:12px"><div class="hot-box-label">🚚 Custo real do frete (pago por você)</div><div class="form-row"><input class="form-input" id="frete-${id}" type="number" step="0.01" inputmode="decimal" placeholder="Ex: 24.90" value="${meta.freteReal||''}"><button class="btn-save" onclick="saveFreteReal('${id}')">Salvar</button></div><div class="hot-hint" style="margin-top:6px">Pedido bateu R$ ${FREE_SHIPPING_THRESHOLD.toFixed(2).replace('.',',')} → frete grátis pro cliente. A Nuvemshop não enviou o custo automático desse pedido — informe aqui o que você pagou no Correios/transportadora pra descontar do lucro.</div></div>`:''}
       </div>
       <div class="detail-col">
         ${alertHot}${alertPrazo}${hotBox}
@@ -990,6 +1011,35 @@ function saveHotprinti(id){
   }
 }
 
+function saveFreteReal(id){
+  const val=document.getElementById('frete-'+id)?.value||'';
+  const prev=orderMeta[id]?.freteReal||'';if(val===prev)return;
+  orderMeta[id]=orderMeta[id]||{};orderMeta[id].freteReal=val;
+  saveMeta();
+  sbUpsert(id,{hot_code:orderMeta[id].hotCode||'',obs:orderMeta[id].obs||'',frete_real:val?parseFloat(val):null,history:orderMeta[id].history||[]});
+  pushHistory(id,`Frete real registrado: ${val?fmtBRL(parseFloat(val)):'—'}`);
+  showToast('✓ Frete real salvo — lucro recalculado');
+
+  /* Recalcula e atualiza a UI sem reload */
+  const order=allOrders.find(o=>String(o.number)===String(id));
+  if(order){
+    const fin=calcProfit(order,orderMeta[id]);
+    const freteRow=document.getElementById('frete-row-'+id);
+    if(freteRow){freteRow.style.display=fin.isFreeShipping?'':'none';}
+    const freteVal=document.getElementById('frete-val-'+id);
+    if(freteVal)freteVal.textContent='− '+fmtBRL(fin.freteDescontado);
+    const lucroVal=document.getElementById('lucro-val-'+id);
+    if(lucroVal)lucroVal.textContent='+ '+fmtBRL(fin.lucro);
+    const margemVal=document.getElementById('margem-val-'+id);
+    if(margemVal)margemVal.textContent=fin.margem+'%';
+    const headerProfit=document.getElementById('o-profit-'+id);
+    if(headerProfit)headerProfit.textContent='+'+fmtBRL(fin.lucro);
+    updateMetrics(allOrders);
+  }
+
+  const dc3=document.querySelector(`#od-${id} .detail-inner > div:last-child`);
+  if(dc3){const ex=dc3.querySelector('.history-box');if(ex)ex.outerHTML=renderHistory(id);else dc3.insertAdjacentHTML('beforeend',renderHistory(id));}
+}
 function saveObs(id){
   const obs=document.getElementById('obs-'+id)?.value||'';
   const prev=orderMeta[id]?.obs||'';if(obs===prev)return;
@@ -1053,7 +1103,7 @@ function updateMetrics(orders){
   const filteredOrders=currentStatusFilter==='todos'?periodOrders:periodOrders.filter(o=>getOrderStatus(o,orderMeta[o.number]||{})===currentStatusFilter);
   const hojeCount=orders.filter(o=>new Date(o.created_at).toDateString()===hoje).length;
   const fat=filteredOrders.reduce((s,o)=>s+parseFloat(o.total),0);
-  const lucroTotal=filteredOrders.reduce((s,o)=>s+calcProfit(o).lucro,0);
+  const lucroTotal=filteredOrders.reduce((s,o)=>s+calcProfit(o,orderMeta[o.number]||{}).lucro,0);
   const pendentes=periodOrders.filter(o=>!orderMeta[o.number]?.hotCode&&o.payment_status==='paid').length;
   const ticket=filteredOrders.length?fat/filteredOrders.length:0;
   const margem=fat>0?(lucroTotal/fat*100).toFixed(1):0;
